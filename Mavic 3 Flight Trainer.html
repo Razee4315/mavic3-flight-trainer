@@ -2020,8 +2020,8 @@ function updateTouch() {
 function applyLayout() {
   const touch = touchSticksOn(), narrow = innerWidth < 900;
   $('#touchL').hidden = $('#touchR').hidden = !touch;
-  const rcOn = S.showRC && !(touch && narrow);
-  $('#rcWrap').hidden = !rcOn; $('#rcShow').hidden = rcOn || (touch && narrow);
+  const rcOn = S.showRC && !(touch && narrow) && APP.started;
+  $('#rcWrap').hidden = !rcOn; $('#rcShow').hidden = rcOn || (touch && narrow) || !APP.started;
 }
 $('#rcToggle').addEventListener('click', () => toggleRC(false));
 $('#rcLabBtn').addEventListener('click', () => { S.rcLabels = !S.rcLabels; saveS(); $('#rcWrap').classList.toggle('nolabels', !S.rcLabels); });
@@ -2276,7 +2276,7 @@ function startLesson(id) {
   const les = LESSONS.find(l => l.id === id); if (!les) return;
   L.cur = les; L.step = 0; L.t = 0; L.st = {}; L.crashes = 0; L.warn = '';
   setCourse([]); les.setup(); setView(les.view || 'chase', true);
-  APP.started = true; closeMenu(); enterStep();
+  APP.started = true; applyLayout(); closeMenu(); enterStep();
   $('#lesson').hidden = false; $('#lNum').textContent = `Lesson ${LESSONS.indexOf(les) + 1} of ${LESSONS.length}`; $('#lTitle').textContent = les.title;
   toast(les.title, 'ok');
 }
@@ -2319,7 +2319,7 @@ function completeLesson() {
   });
   exitLesson();
 }
-function startFree() { exitLesson(); resetDrone(); setView('chase', true); APP.started = true; closeMenu(); toast('Free flight — press Esc for the menu', 'ok'); }
+function startFree() { exitLesson(); resetDrone(); setView('chase', true); APP.started = true; applyLayout(); closeMenu(); toast('Free flight — press Esc for the menu', 'ok'); }
 function showCrash() {
   if (!D.crashed) return;
   APP.paused = true;
@@ -2580,7 +2580,7 @@ function draw(dt, t) {
   if (APP.panel === 'controls') updateAxesLive();
   if (!$('#menu').hidden && ((frame.n = (frame.n || 0) + 1) % 60 === 0)) inputStatus();
 }
-if (/debug/.test(location.search)) window.__T = { tick, update, D, keys, L, S, VIEW, startLesson, startFree, INP: () => INP, STK, COURSE };
+if (/debug/.test(location.search)) window.__T = { tick, update, cam, scene, THREE, D, keys, L, S, VIEW, startLesson, startFree, INP: () => INP, STK, COURSE };
 
 /* ---------- boot ---------- */
 buildRC(); resetDrone(); setView('chase', true); applyQuality(); refreshMenu();
