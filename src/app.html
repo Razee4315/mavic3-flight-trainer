@@ -959,6 +959,7 @@ function addTree(x, z, kind, s) {
     }
     mBody.instanceMatrix.needsUpdate = mCab.instanceMatrix.needsUpdate = mWheel.instanceMatrix.needsUpdate = true;
   });
+  MOVERS[MOVERS.length - 1](0); // place traffic before the first frame
 }
 
 /* ---------- street lights ---------- */
