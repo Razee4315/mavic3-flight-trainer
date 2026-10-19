@@ -107,13 +107,13 @@ b{font-weight:600;color:#fff}
 #tele u{text-decoration:none;font:500 11px var(--f-mono);color:var(--ink-2)}
 
 /* ---------- remote ---------- */
-#rcWrap{position:absolute;left:50%;bottom:calc(2px + var(--sb));transform:translateX(-50%);width:min(500px,38vw);aspect-ratio:1.3;touch-action:none;max-width:100%}
+#rcWrap{position:absolute;left:50%;bottom:calc(2px + var(--sb));transform:translateX(-50%);width:min(540px,42vw);aspect-ratio:1.22;touch-action:none;max-width:100%}
 #rcLabels{position:absolute;inset:0;pointer-events:none}
-.rl{position:absolute;left:0;top:0;white-space:nowrap;font:600 11px/1 var(--f-display);letter-spacing:.03em;color:#e3e8ec;text-shadow:0 1px 2px #000,0 0 6px rgba(0,0,0,.8);transition:color .2s}
+.rl{position:absolute;left:0;top:0;white-space:nowrap;font:600 11px/1 var(--f-display);letter-spacing:.03em;color:#e3e8ec;padding:3px 5px;border-radius:5px;background:rgba(7,10,13,.62);border:1px solid rgba(255,255,255,.1);transition:color .2s,border-color .2s}
 .rl kbd{font-size:9.5px;padding:2px 4px 1px;margin:0 1px;background:rgba(0,0,0,.55)}
-.rl.cap{color:var(--amber);font-weight:700;letter-spacing:.1em;font-size:11px}
-.rl.dir{font-size:10.5px;color:#c9d1d8}
-.rl.hl{color:var(--amber)}
+.rl.cap{color:var(--amber);font-weight:700;letter-spacing:.1em;font-size:11px;background:none;border:0;text-shadow:0 1px 2px #000,0 0 6px rgba(0,0,0,.8)}
+.rl.dir{font-size:10.5px;color:#d3dae0;background:none;border:0;padding:0;text-shadow:0 1px 2px #000,0 0 5px rgba(0,0,0,.9)}
+.rl.hl{color:var(--amber);border-color:rgba(245,165,36,.6)}
 #rcWrap.nolabels #rcLabels{display:none}
 #rcLabBtn{position:absolute;right:56px;bottom:6px;font:600 11px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);padding:4px 8px;border-radius:6px;background:rgba(0,0,0,.4);border:1px solid var(--line)}
 #rc{width:100%;height:auto;display:block;pointer-events:auto;filter:drop-shadow(0 10px 22px rgba(0,0,0,.55));touch-action:none}
@@ -237,7 +237,7 @@ input[type=range]{accent-color:var(--amber)}
 .gallery img{width:100%;border-radius:8px;display:block;border:1px solid var(--line);cursor:zoom-in}
 .big img{width:100%;border-radius:10px}
 
-@media (max-width:1100px){#rcWrap{width:min(470px,46vw)} #tele b{font-size:15px;min-width:44px} #navmap{width:118px;height:118px}}
+@media (max-width:1100px){#rcWrap{width:min(480px,50vw)} #tele b{font-size:15px;min-width:44px} #navmap{width:118px;height:118px}}
 @media (max-width:860px){
   .menu-grid{grid-template-columns:minmax(0,1fr);gap:22px}
   #indRc,#indTime small{display:none}
@@ -974,22 +974,90 @@ function addTree(x, z, kind, s) {
   }
 }
 
-/* ---------- pilot (you) ---------- */
+/* ---------- pilot (you): a person holding an RC-N1 whose head and shoulders follow the drone ----------
+   Faces −Z. Hips pivot the upper body, the neck pivots the head. Units: metres, feet at y = 0. */
 const pilot = new THREE.Group();
+const PIL = { torso: new THREE.Group(), head: new THREE.Group(), screen: null, yaw: 0, pit: 0.1 };
 {
-  const skin = new THREE.MeshStandardMaterial({ color: 0xc89a7a, roughness: 0.7 });
-  const jeans = new THREE.MeshStandardMaterial({ color: 0x2c3e5c, roughness: 0.85 });
-  const vest = new THREE.MeshStandardMaterial({ color: 0xff7a14, roughness: 0.6, emissive: 0x2a1100 });
-  const dark = new THREE.MeshStandardMaterial({ color: 0x202326, roughness: 0.6 });
-  const add = (g, m, x, y, z, rx = 0, rz = 0) => { const o = new THREE.Mesh(g, m); o.position.set(x, y, z); o.rotation.set(rx, 0, rz); o.castShadow = true; pilot.add(o); return o; };
-  add(new THREE.CapsuleGeometry(0.09, 0.72, 4, 8), jeans, -0.11, 0.46, 0); add(new THREE.CapsuleGeometry(0.09, 0.72, 4, 8), jeans, 0.11, 0.46, 0);
-  add(new THREE.CapsuleGeometry(0.2, 0.5, 4, 10), vest, 0, 1.18, 0);
-  add(new THREE.SphereGeometry(0.12, 16, 12), skin, 0, 1.62, -0.01);
-  add(new THREE.CylinderGeometry(0.125, 0.13, 0.08, 16), dark, 0, 1.71, 0); add(new THREE.BoxGeometry(0.2, 0.02, 0.12), dark, 0, 1.68, -0.13);
-  add(new THREE.CapsuleGeometry(0.06, 0.34, 4, 8), vest, -0.2, 1.22, -0.14, 1.1, 0.25); add(new THREE.CapsuleGeometry(0.06, 0.34, 4, 8), vest, 0.2, 1.22, -0.14, 1.1, -0.25);
-  add(new THREE.BoxGeometry(0.2, 0.05, 0.09), dark, 0, 1.12, -0.36);
-  add(new THREE.BoxGeometry(0.17, 0.09, 0.008), dark, 0, 1.2, -0.39, -0.5);
+  const M = (color, roughness = 0.75, o = {}) => new THREE.MeshStandardMaterial({ color, roughness, ...o });
+  const skin = M(0xc68a64, 0.62), shirt = M(0x27303d, 0.88), pants = M(0x55594a, 0.92), vest = M(0xff6f12, 0.6, { emissive: 0x2a0d00 });
+  const refl = M(0xe4e8ea, 0.28, { metalness: 0.55, emissive: 0x2a2a2a }), shoe = M(0x2c2f34, 0.55), sole = M(0xdcd8cf, 0.85);
+  const capM = M(0x1d2733, 0.7), hairM = M(0x2b1d14, 0.95), dark = M(0x1c1e21, 0.5), beltM = M(0x3b2a1b, 0.55), buckle = M(0xb9bec4, 0.3, { metalness: 0.9 });
+  const lensM = new THREE.MeshPhysicalMaterial({ color: 0x0a0c10, roughness: 0.06, metalness: 0.7, clearcoat: 1 });
+  const mesh = (g, m, parent, x = 0, y = 0, z = 0) => { const o = new THREE.Mesh(g, m); o.position.set(x, y, z); o.castShadow = true; o.receiveShadow = true; parent.add(o); return o; };
+  const _a = new V3(), _b = new V3(), _up = new V3(0, 1, 0);
+  // tapered limb between two points, with a ball at the far joint so bends look continuous
+  const limb = (parent, a, b, r0, r1, m, joint = true) => {
+    _a.set(...a); _b.set(...b);
+    const o = mesh(new THREE.CylinderGeometry(r1, r0, _a.distanceTo(_b), 16), m, parent); o.position.copy(_a).add(_b).multiplyScalar(0.5);
+    o.quaternion.setFromUnitVectors(_up, _b.clone().sub(_a).normalize());
+    if (joint) mesh(new THREE.SphereGeometry(r1, 16, 10), m, parent, _b.x, _b.y, _b.z);
+    return o;
+  };
+  // legs, shoes, hips (fixed)
+  for (const s of [-1, 1]) {
+    mesh(new THREE.SphereGeometry(0.084, 16, 10), pants, pilot, s * 0.092, 0.93, 0);
+    limb(pilot, [s * 0.092, 0.93, 0], [s * 0.108, 0.5, -0.018], 0.084, 0.062, pants);
+    limb(pilot, [s * 0.108, 0.5, -0.018], [s * 0.12, 0.1, 0.004], 0.06, 0.046, pants, false);
+    const up = mesh(new THREE.CapsuleGeometry(0.05, 0.16, 6, 14), shoe, pilot, s * 0.122, 0.06, -0.035); up.rotation.x = Math.PI / 2; up.scale.set(1, 1, 0.74);
+    const so = mesh(new THREE.CapsuleGeometry(0.052, 0.17, 4, 14), sole, pilot, s * 0.122, 0.016, -0.035); so.rotation.x = Math.PI / 2; so.scale.set(1.04, 1, 0.24);
+  }
+  const pelvis = mesh(new THREE.SphereGeometry(0.16, 20, 12), pants, pilot, 0, 0.95, 0); pelvis.scale.set(1, 0.62, 0.7);
+  // upper body: lathe-turned torso flattened front-to-back, a hi-vis vest with reflective bands
+  const T = PIL.torso; T.position.set(0, 0.95, 0); pilot.add(T);
+  const prof = [[0.001, 0], [0.152, 0], [0.155, 0.08], [0.16, 0.2], [0.174, 0.34], [0.18, 0.42], [0.168, 0.48], [0.124, 0.528], [0.06, 0.55], [0.001, 0.555]];
+  const torso = mesh(new THREE.LatheGeometry(prof.map(([r, y]) => new THREE.Vector2(r, y)), 28), shirt, T); torso.scale.z = 0.64;
+  const rAt = y => { for (let i = 0; i < prof.length - 1; i++) if (y <= prof[i + 1][1]) return lerp(prof[i][0], prof[i + 1][0], (y - prof[i][1]) / (prof[i + 1][1] - prof[i][1])); return 0; };
+  const vestPts = []; for (let y = 0.035; y <= 0.455; y += 0.03) vestPts.push(new THREE.Vector2(rAt(y) + 0.007, y));
+  const vestM = mesh(new THREE.LatheGeometry(vestPts, 28), vest, T); vestM.scale.z = 0.66; vestM.material.side = THREE.DoubleSide;
+  for (const y of [0.15, 0.29]) { const b = mesh(new THREE.TorusGeometry(rAt(y) + 0.009, 0.011, 6, 40), refl, T, 0, y, 0); b.rotation.x = Math.PI / 2; b.scale.y = 0.66; }
+  const beltR = mesh(new THREE.TorusGeometry(0.153, 0.016, 6, 40), beltM, T, 0, 0.02, 0); beltR.rotation.x = Math.PI / 2; beltR.scale.y = 0.66;
+  mesh(new THREE.BoxGeometry(0.05, 0.034, 0.012), buckle, T, 0, 0.02, -0.103);
+  const collar = mesh(new THREE.TorusGeometry(0.062, 0.018, 8, 28), shirt, T, 0, 0.535, 0.004); collar.rotation.x = Math.PI / 2;
+  mesh(new THREE.CylinderGeometry(0.047, 0.052, 0.08, 16), skin, T, 0, 0.565, 0.004);
+  // head: skull, ears, nose, sunglasses, cap with a curved bill, hair at the back
+  const H = PIL.head; H.position.set(0, 0.585, 0.004); T.add(H); H.scale.setScalar(1.06);
+  const skull = mesh(new THREE.SphereGeometry(0.1, 28, 20), skin, H, 0, 0.1, 0); skull.scale.set(0.86, 1.1, 0.98);
+  const jaw = mesh(new THREE.SphereGeometry(0.07, 20, 12), skin, H, 0, 0.045, -0.025); jaw.scale.set(1, 0.8, 1);
+  for (const s of [-1, 1]) { const e = mesh(new THREE.SphereGeometry(0.022, 12, 8), skin, H, s * 0.086, 0.1, 0.004); e.scale.set(0.45, 1, 0.75); }
+  const nose = mesh(new THREE.ConeGeometry(0.016, 0.036, 10), skin, H, 0, 0.088, -0.096); nose.rotation.x = -Math.PI / 2 - 0.35;
+  const hair = mesh(new THREE.SphereGeometry(0.104, 24, 14, 0, Math.PI, 0.25 * Math.PI, 0.4 * Math.PI), hairM, H, 0, 0.1, 0.004); hair.scale.set(0.88, 1.1, 0.98);
+  mesh(new THREE.BoxGeometry(0.15, 0.034, 0.014), lensM, H, 0, 0.118, -0.088).castShadow = false;
+  mesh(new THREE.BoxGeometry(0.16, 0.007, 0.016), dark, H, 0, 0.137, -0.088);
+  for (const s of [-1, 1]) mesh(new THREE.BoxGeometry(0.006, 0.007, 0.1), dark, H, s * 0.08, 0.128, -0.04);
+  const dome = mesh(new THREE.SphereGeometry(0.108, 28, 12, 0, Math.PI * 2, 0, Math.PI * 0.5), capM, H, 0, 0.128, 0.002); dome.scale.set(0.9, 0.82, 1);
+  const bill = mesh(new THREE.CylinderGeometry(0.088, 0.088, 0.008, 24, 1, false, Math.PI / 2, Math.PI), capM, H, 0, 0.15, -0.07); bill.scale.z = 1.05; bill.rotation.x = -0.12;
+  mesh(new THREE.SphereGeometry(0.012, 10, 6), capM, H, 0, 0.215, 0.002);
+  // arms holding the remote at chest height; thumbs rest on the sticks
+  for (const s of [-1, 1]) {
+    mesh(new THREE.SphereGeometry(0.056, 16, 10), shirt, T, s * 0.178, 0.462, 0.006);
+    limb(T, [s * 0.19, 0.46, 0.01], [s * 0.215, 0.2, -0.06], 0.05, 0.042, shirt);
+    limb(T, [s * 0.215, 0.2, -0.06], [s * 0.098, 0.2, -0.27], 0.041, 0.031, shirt, false);
+    const hand = mesh(new THREE.SphereGeometry(0.042, 16, 10), skin, T, s * 0.088, 0.19, -0.3); hand.scale.set(0.78, 0.7, 1.12);
+    limb(T, [s * 0.078, 0.205, -0.285], [s * 0.052, 0.226, -0.322], 0.013, 0.011, skin);
+  }
+  // the remote in their hands, with the phone showing the live feed
+  const R = new THREE.Group(); R.position.set(0, 0.2, -0.31); R.rotation.x = 0.38; T.add(R);
+  mesh(new THREE.BoxGeometry(0.13, 0.026, 0.07), dark, R);
+  for (const s of [-1, 1]) { const g = mesh(new THREE.CapsuleGeometry(0.022, 0.05, 4, 12), dark, R, s * 0.056, -0.006, 0.012); g.rotation.x = Math.PI / 2; g.scale.set(1, 1, 0.8); mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.006, 12), M(0x45494f, 0.5), R, s * 0.04, 0.018, -0.004); }
+  const ph = new THREE.Group(); ph.position.set(0, 0.052, -0.05); ph.rotation.x = -0.32; R.add(ph);
+  mesh(new THREE.BoxGeometry(0.022, 0.07, 0.006), dark, ph, 0, -0.012, -0.007);
+  mesh(new THREE.BoxGeometry(0.158, 0.074, 0.008), dark, ph);
+  PIL.screen = mesh(new THREE.PlaneGeometry(0.15, 0.067), new THREE.MeshBasicMaterial({ color: 0x9cc4e8 }), ph, 0, 0, 0.0042); PIL.screen.castShadow = false;
+  // drone bag at their feet
+  const bag = mesh(new THREE.BoxGeometry(0.34, 0.13, 0.22), M(0x33373c, 0.8), pilot, 0.46, 0.065, 0.16); bag.rotation.y = 0.5;
+  const strap = mesh(new THREE.TorusGeometry(0.07, 0.01, 6, 20, Math.PI), dark, pilot, 0.46, 0.13, 0.16); strap.rotation.y = 0.5;
   pilot.position.copy(PILOT); scene.add(pilot);
+}
+const _pe = new V3();
+function updatePilot(dt, t) {
+  pilot.visible = VIEW.mode !== 'pilot' || !APP.started || APP.paused && !APP.started;
+  const dx = D.pos.x - PILOT.x, dz = D.pos.z - PILOT.z, dy = D.pos.y - (PILOT.y + 1.66);
+  const yaw = clamp(Math.atan2(-dx, -dz), -2.3, 2.3), pit = clamp(Math.atan2(dy, Math.max(0.5, Math.hypot(dx, dz))), -0.55, 1.15);
+  const k = 1 - Math.exp(-dt * 5);
+  PIL.yaw += (yaw - PIL.yaw) * k; PIL.pit += (pit - PIL.pit) * k;
+  PIL.torso.rotation.y = PIL.yaw * 0.4; PIL.torso.position.y = 0.95 + Math.sin(t * 1.4) * 0.0025;
+  PIL.head.rotation.set(PIL.pit * 0.85, PIL.yaw * 0.6, 0, 'YXZ');
 }
 
 /* ---------- clouds ---------- */
@@ -1068,53 +1136,98 @@ const MOTORS = [ // [x, y, z, spin dir]
   [-0.13, -0.022, 0.124, -1], [0.13, -0.022, 0.124, 1]
 ];
 const drone = new THREE.Group(); scene.add(drone);
-const gimbal = new THREE.Group(); scene.add(gimbal);
-const GIMBAL_PIVOT = new V3(0, -0.036, -0.112);
+const gimbal = new THREE.Group(); scene.add(gimbal);         // camera head: pitches and holds the horizon
+const gimbalYoke = new THREE.Group(); scene.add(gimbalYoke); // arm + roll motor: follows yaw only, so it never swings into the body
+const GIMBAL_PIVOT = new V3(0, -0.03, -0.106);               // pitch axis runs through the middle of the camera head
 const DR = { props: [], blades: [], discs: [], front: [], rear: [], bottom: null };
 {
-  const mBody = new THREE.MeshPhysicalMaterial({ color: 0x5e6268, roughness: 0.38, metalness: 0.25, clearcoat: 0.35, clearcoatRoughness: 0.4 });
-  const mBat = new THREE.MeshStandardMaterial({ color: 0x55595f, roughness: 0.5, metalness: 0.2 });
-  const mDark = new THREE.MeshStandardMaterial({ color: 0x1d1f22, roughness: 0.55, metalness: 0.2 });
-  const mArm = new THREE.MeshStandardMaterial({ color: 0x4b4f55, roughness: 0.45, metalness: 0.3 });
-  const mGlass = new THREE.MeshPhysicalMaterial({ color: 0x030405, roughness: 0.03, metalness: 0.3, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.6 });
+  const mBat = new THREE.MeshStandardMaterial({ color: 0x4f5358, roughness: 0.55, metalness: 0.15 });
+  const mDark = new THREE.MeshStandardMaterial({ color: 0x1c1e21, roughness: 0.5, metalness: 0.2 });
+  const mArm = new THREE.MeshPhysicalMaterial({ color: 0x575b61, roughness: 0.42, metalness: 0.2, clearcoat: 0.3, clearcoatRoughness: 0.4 });
+  const mCoat = new THREE.MeshPhysicalMaterial({ color: 0x05070a, roughness: 0.05, metalness: 0.2, clearcoat: 1, iridescence: 1, iridescenceIOR: 1.6, iridescenceThicknessRange: [250, 520], envMapIntensity: 2 });
   const mMetal = new THREE.MeshStandardMaterial({ color: 0xb6bac0, roughness: 0.22, metalness: 0.95 });
-  const mProp = new THREE.MeshStandardMaterial({ color: 0x2a2c30, roughness: 0.45, metalness: 0.1 });
+  const mProp = new THREE.MeshStandardMaterial({ color: 0x26282c, roughness: 0.42, metalness: 0.1 });
   const add = (parent, geo, mat, x = 0, y = 0, z = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; parent.add(m); return m; };
-  // fuselage — top-view outline extruded vertically, heavily bevelled
-  const sh = new THREE.Shape();
-  sh.moveTo(-0.03, -0.122); sh.quadraticCurveTo(0, -0.134, 0.03, -0.122);
-  sh.quadraticCurveTo(0.05, -0.095, 0.052, -0.03); sh.lineTo(0.049, 0.098);
-  sh.quadraticCurveTo(0.046, 0.122, 0.028, 0.124); sh.lineTo(-0.028, 0.124);
-  sh.quadraticCurveTo(-0.046, 0.122, -0.049, 0.098); sh.lineTo(-0.052, -0.03);
-  sh.quadraticCurveTo(-0.05, -0.095, -0.03, -0.122);
-  const fus = new THREE.ExtrudeGeometry(sh, { depth: 0.046, bevelEnabled: true, bevelThickness: 0.014, bevelSize: 0.012, bevelSegments: 5, curveSegments: 18 });
-  fus.rotateX(Math.PI / 2); fus.translate(0, 0.025, 0);
-  add(drone, fus, mBody);
-  // battery on top-rear with grip ridges
-  const bs = new THREE.Shape(); const bw = 0.04, bl0 = -0.01, bl1 = 0.118;
-  bs.moveTo(-bw, bl0); bs.lineTo(bw, bl0); bs.lineTo(bw, bl1 - 0.012); bs.quadraticCurveTo(bw, bl1, bw - 0.012, bl1); bs.lineTo(-bw + 0.012, bl1); bs.quadraticCurveTo(-bw, bl1, -bw, bl1 - 0.012); bs.closePath();
-  const bat = new THREE.ExtrudeGeometry(bs, { depth: 0.008, bevelEnabled: true, bevelThickness: 0.006, bevelSize: 0.006, bevelSegments: 3 });
-  bat.rotateX(Math.PI / 2); bat.translate(0, 0.05, 0);
-  add(drone, bat, mBat);
-  for (let i = 0; i < 5; i++) add(drone, new THREE.BoxGeometry(0.07, 0.002, 0.003), mDark, 0, 0.0565, 0.08 + i * 0.007);
-  // nose: front vision sensor pair + rear pair + bottom pair
-  const sens = new THREE.CircleGeometry(0.0075, 20);
-  for (const sx of [-0.021, 0.021]) {
-    const f = add(drone, sens, mGlass, sx, 0.02, -0.1345); f.rotation.y = Math.PI; f.castShadow = false;
-    const r = add(drone, sens, mGlass, sx, 0.012, 0.1385); r.castShadow = false;
-    const b = add(drone, sens, mGlass, sx, -0.0355, -0.04); b.rotation.x = Math.PI / 2; b.castShadow = false;
+  const Y = new V3(0, 1, 0), Z = new V3(0, 0, 1);
+
+  // fuselage: a unit sphere pushed toward a rounded box, tapered at nose and tail, with the belly lifted under the nose for the gimbal
+  const se = (c, e) => Math.sign(c) * Math.pow(Math.abs(c), e);
+  const shape = (sx, sy, sz, out) => {
+    const x = se(sx, 0.5), y = se(sy, 0.6), z = se(sz, 0.48);
+    const nose = smoothstep(0.15, 1, -z), tail = smoothstep(0.2, 1, z);
+    const w = 0.05 * (1 - 0.2 * nose * nose - 0.1 * tail * tail);
+    const h = y > 0 ? 0.033 * (1 - 0.05 * nose - 0.2 * tail) : 0.033 * (1 - 0.5 * nose - 0.08 * tail);
+    return out.set(x * w, 0.022 + y * h, z * 0.13);
+  };
+  const fusG = new THREE.SphereGeometry(1, 96, 48);
+  {
+    const p = fusG.attributes.position, v = new V3();
+    for (let i = 0; i < p.count; i++) { shape(p.getX(i), p.getY(i), p.getZ(i), v); p.setXYZ(i, v.x, v.y, v.z); }
+    fusG.computeVertexNormals();
+    const n = fusG.attributes.normal, acc = new Map(), key = i => `${p.getX(i).toFixed(5)},${p.getY(i).toFixed(5)},${p.getZ(i).toFixed(5)}`; // weld normals across the UV seam and poles
+    for (let i = 0; i < p.count; i++) { const k = key(i), a = acc.get(k) || [0, 0, 0]; a[0] += n.getX(i); a[1] += n.getY(i); a[2] += n.getZ(i); acc.set(k, a); }
+    for (let i = 0; i < p.count; i++) { const a = acc.get(key(i)), l = Math.hypot(a[0], a[1], a[2]) || 1; n.setXYZ(i, a[0] / l, a[1] / l, a[2] / l); }
   }
-  add(drone, new THREE.BoxGeometry(0.07, 0.016, 0.004), mDark, 0, 0.02, -0.132);
-  // bottom auxiliary light
-  DR.bottom = add(drone, new THREE.CircleGeometry(0.006, 16), new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x000000, emissiveIntensity: 3 }), 0, -0.0356, 0.03);
-  DR.bottom.rotation.x = Math.PI / 2;
-  // arms, motors, legs, props
-  function beam(a, b, w, h, mat) { const len = a.distanceTo(b); const m = add(drone, new THREE.BoxGeometry(w, h, len), mat); m.position.copy(a).add(b).multiplyScalar(0.5); m.lookAt(b.clone().add(drone.position)); return m; }
-  const roots = [[-0.044, 0.02, -0.07], [0.044, 0.02, -0.07], [-0.042, -0.02, 0.07], [0.042, -0.02, 0.07]];
+  // paint the shell in body space: grey plastic, a gloss-black visor across the nose, a fine seam where the top shell meets the belly
+  const paint = (fn, srgb) => canvasTex(512, 256, (g, w, h) => {
+    const im = g.createImageData(w, h), P = new V3();
+    for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
+      const phi = (i + 0.5) / w * Math.PI * 2, th = (j + 0.5) / h * Math.PI;
+      shape(-Math.cos(phi) * Math.sin(th), Math.cos(th), Math.sin(phi) * Math.sin(th), P);
+      const visor = smoothstep(-0.098, -0.106, P.z) * smoothstep(0.012, 0.018, P.y) * smoothstep(0.053, 0.047, P.y);
+      const seam = (1 - smoothstep(0.0005, 0.0011, Math.abs(P.y - 0.009))) * smoothstep(-0.09, -0.07, P.z);
+      const c = fn(visor, seam), o = (j * w + i) * 4; im.data[o] = c[0]; im.data[o + 1] = c[1]; im.data[o + 2] = c[2]; im.data[o + 3] = 255;
+    }
+    g.putImageData(im, 0, 0);
+  }, { srgb });
+  const mix = (a, b, t) => a.map((v, k) => v + (b[k] - v) * t);
+  const fusMap = paint((v, s) => mix(mix([98, 102, 108], [44, 46, 50], s * 0.8), [10, 11, 13], v), true);
+  const fusRough = paint(v => { const r = lerp(118, 22, v); return [r, r, r]; }, false);
+  fusMap.wrapS = fusRough.wrapS = THREE.ClampToEdgeWrapping;
+  const mBody = new THREE.MeshPhysicalMaterial({ map: fusMap, roughnessMap: fusRough, roughness: 1, metalness: 0.18, clearcoat: 0.35, clearcoatRoughness: 0.35 });
+  const fus = add(drone, fusG, mBody);
+
+  // battery on the top-rear, with grip ridges and the release buttons
+  const bs = new THREE.Shape(); const bw = 0.039, bl0 = -0.012, bl1 = 0.112;
+  bs.moveTo(-bw, bl0 + 0.01); bs.quadraticCurveTo(-bw, bl0, -bw + 0.01, bl0); bs.lineTo(bw - 0.01, bl0); bs.quadraticCurveTo(bw, bl0, bw, bl0 + 0.01);
+  bs.lineTo(bw, bl1 - 0.016); bs.quadraticCurveTo(bw, bl1, bw - 0.016, bl1); bs.lineTo(-bw + 0.016, bl1); bs.quadraticCurveTo(-bw, bl1, -bw, bl1 - 0.016); bs.closePath();
+  const bat = new THREE.ExtrudeGeometry(bs, { depth: 0.01, bevelEnabled: true, bevelThickness: 0.005, bevelSize: 0.005, bevelSegments: 4, curveSegments: 12 });
+  bat.rotateX(Math.PI / 2); bat.translate(0, 0.055, 0);
+  add(drone, bat, mBat);
+  for (let i = 0; i < 6; i++) add(drone, new THREE.BoxGeometry(0.06, 0.0018, 0.0028), mDark, 0, 0.0605, 0.064 + i * 0.0068);
+  for (const s of [-1, 1]) add(drone, new THREE.BoxGeometry(0.003, 0.008, 0.016), mDark, s * 0.0445, 0.05, 0.03);
+
+  // vision sensors, found by casting onto the shell: front pair in the visor, rear pair, sides, top and bottom
+  const ray = new THREE.Raycaster(); fus.updateMatrixWorld(true);
+  const sensor = (x, y, z, dx, dy, dz, r) => {
+    ray.set(new V3(x - dx, y - dy, z - dz), new V3(dx, dy, dz)); const h = ray.intersectObject(fus)[0]; if (!h) return;
+    const n = h.face.normal.clone(), p = h.point;
+    const ring = add(drone, new THREE.CylinderGeometry(r * 1.45, r * 1.45, 0.002, 28), mDark, p.x, p.y, p.z); ring.quaternion.setFromUnitVectors(Y, n); ring.castShadow = false;
+    const l = add(drone, new THREE.CircleGeometry(r, 28), mCoat, p.x + n.x * 0.0012, p.y + n.y * 0.0012, p.z + n.z * 0.0012); l.quaternion.setFromUnitVectors(Z, n); l.castShadow = false;
+  };
+  for (const s of [-1, 1]) {
+    sensor(s * 0.022, 0.033, 0, 0, 0, 1, 0.0078);   // front
+    sensor(s * 0.019, 0.034, 0, 0, 0, -1, 0.0058);  // rear
+    sensor(0, 0.03, -0.084, -s, 0, 0, 0.0052);      // sides
+    sensor(s * 0.017, 0, -0.094, 0, -1, 0, 0.005);  // up
+    sensor(s * 0.018, 0, -0.02, 0, 1, 0, 0.0058);   // down
+  }
+  { // bottom auxiliary light
+    ray.set(new V3(0, -1, 0.035), Y); const h = ray.intersectObject(fus)[0];
+    DR.bottom = add(drone, new THREE.CircleGeometry(0.0062, 20), new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x000000, emissiveIntensity: 3 }), 0, h.point.y - 0.0008, 0.035);
+    DR.bottom.rotation.x = Math.PI / 2; DR.bottom.castShadow = false;
+  }
+
+  // arms: flattened, tapering toward the motors, with a hinge at the body; motor pods, bells, legs and props
+  const arm = (a, b, w0, w1, hr) => {
+    const g = new THREE.CylinderGeometry(w1 / 2, w0 / 2, a.distanceTo(b), 18); g.rotateX(Math.PI / 2);
+    const m = add(drone, g, mArm); m.position.copy(a).add(b).multiplyScalar(0.5); m.lookAt(b); m.scale.y = hr; return m;
+  };
+  const roots = [[-0.044, 0.034, -0.068], [0.044, 0.034, -0.068], [-0.042, 0.006, 0.07], [0.042, 0.006, 0.07]];
   const bladeShape = new THREE.Shape();
-  bladeShape.moveTo(0.009, -0.006); bladeShape.quadraticCurveTo(0.04, -0.015, 0.09, -0.009); bladeShape.quadraticCurveTo(0.121, -0.004, 0.12, 0.002);
-  bladeShape.quadraticCurveTo(0.118, 0.008, 0.09, 0.008); bladeShape.quadraticCurveTo(0.04, 0.012, 0.009, 0.006); bladeShape.closePath();
-  const bladeGeo = new THREE.ExtrudeGeometry(bladeShape, { depth: 0.0016, bevelEnabled: false, curveSegments: 10 }); bladeGeo.rotateX(-Math.PI / 2);
+  bladeShape.moveTo(0.009, -0.006); bladeShape.quadraticCurveTo(0.04, -0.016, 0.09, -0.01); bladeShape.quadraticCurveTo(0.121, -0.005, 0.12, 0.002);
+  bladeShape.quadraticCurveTo(0.118, 0.008, 0.09, 0.007); bladeShape.quadraticCurveTo(0.04, 0.011, 0.009, 0.006); bladeShape.closePath();
+  const bladeGeo = new THREE.ExtrudeGeometry(bladeShape, { depth: 0.0016, bevelEnabled: true, bevelThickness: 0.0005, bevelSize: 0.0006, bevelSegments: 1, curveSegments: 12 }); bladeGeo.rotateX(-Math.PI / 2);
   const discTex = canvasTex(256, 256, (g, w, h) => {
     const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
     gr.addColorStop(0, 'rgba(30,32,36,0)'); gr.addColorStop(.12, 'rgba(30,32,36,.35)'); gr.addColorStop(.5, 'rgba(40,42,46,.18)'); gr.addColorStop(.86, 'rgba(50,52,56,.26)'); gr.addColorStop(.95, 'rgba(160,164,170,.22)'); gr.addColorStop(1, 'rgba(60,60,60,0)');
@@ -1122,38 +1235,47 @@ const DR = { props: [], blades: [], discs: [], front: [], rear: [], bottom: null
   });
   const discMat = new THREE.MeshBasicMaterial({ map: discTex, transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide });
   MOTORS.forEach(([x, y, z, dir], i) => {
-    const m = new V3(x, y, z), r = new V3(...roots[i]);
-    beam(r, new V3(x * 0.92, y - 0.006, z * 0.92), 0.02, 0.014, mArm);
-    add(drone, new THREE.CylinderGeometry(0.0165, 0.0175, 0.02, 24), mDark, x, y, z);
-    add(drone, new THREE.CylinderGeometry(0.0172, 0.0172, 0.007, 24), mMetal, x, y + 0.0135, z);
-    const legLen = y + CONTACT - 0.004;
-    add(drone, new THREE.CylinderGeometry(0.0045, 0.006, legLen, 8), mDark, x * (i < 2 ? 0.96 : 0.97), y - legLen / 2 - 0.004, z);
-    add(drone, new THREE.SphereGeometry(0.007, 10, 8), mDark, x * (i < 2 ? 0.96 : 0.97), -CONTACT + 0.006, z);
-    const prop = new THREE.Group(); prop.position.set(x, y + 0.02, z); drone.add(prop);
-    add(prop, new THREE.CylinderGeometry(0.008, 0.009, 0.007, 16), mDark);
+    const front = i < 2, r = new V3(...roots[i]);
+    arm(r, new V3(x, y - 0.004, z), 0.026, 0.017, 0.62);
+    add(drone, new THREE.CylinderGeometry(0.0085, 0.0085, 0.02, 18), mDark, r.x, r.y, r.z);
+    add(drone, new THREE.CylinderGeometry(0.0195, 0.0185, 0.014, 28), mArm, x, y - 0.004, z);
+    add(drone, new THREE.CylinderGeometry(0.0162, 0.017, 0.016, 28), mDark, x, y + 0.01, z);
+    add(drone, new THREE.CylinderGeometry(0.0165, 0.0165, 0.004, 28), mMetal, x, y + 0.0175, z);
+    // landing leg: tapered, splayed slightly outward, with a rubber foot
+    const top = new V3(x * 0.97, y - 0.011, z), foot = new V3(x * (front ? 1.02 : 1.0), -CONTACT + 0.006, z + (front ? -0.006 : 0.008));
+    const leg = add(drone, new THREE.CylinderGeometry(0.0034, 0.0058, top.distanceTo(foot), 10), mDark);
+    leg.position.copy(top).add(foot).multiplyScalar(0.5); leg.quaternion.setFromUnitVectors(Y, foot.clone().sub(top).normalize());
+    add(drone, new THREE.SphereGeometry(0.0062, 12, 8), mDark, foot.x, foot.y, foot.z);
+    const prop = new THREE.Group(); prop.position.set(x, y + 0.021, z); drone.add(prop);
+    add(prop, new THREE.CylinderGeometry(0.0075, 0.0095, 0.007, 20), mDark);
+    add(prop, new THREE.SphereGeometry(0.0055, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2), mMetal, 0, 0.0035, 0);
     const bl = new THREE.Group(); prop.add(bl);
     for (const a of [0, Math.PI]) { const b = add(bl, bladeGeo, mProp); b.rotation.set(dir * 0.14, a, 0, 'YXZ'); if (dir < 0) b.scale.z = -1; }
     const disc = new THREE.Mesh(new THREE.CircleGeometry(0.121, 48), discMat.clone()); disc.rotation.x = -Math.PI / 2; disc.position.y = 0.002; prop.add(disc);
     DR.props.push({ g: prop, dir, ang: rnd() * 6 }); DR.blades.push(bl); DR.discs.push(disc);
     // front LEDs under the front arms, status LEDs on the rear arms
-    const led = add(drone, new THREE.BoxGeometry(0.012, 0.004, 0.006), new THREE.MeshStandardMaterial({ color: 0x111111, emissive: i < 2 ? 0xff1a10 : 0x22ff55, emissiveIntensity: 0 }), x * 0.8, y - 0.012, z * 0.8);
-    led.castShadow = false; (i < 2 ? DR.front : DR.rear).push(led);
+    const led = add(drone, new THREE.BoxGeometry(0.012, 0.004, 0.007), new THREE.MeshStandardMaterial({ color: 0x111111, emissive: front ? 0xff1a10 : 0x22ff55, emissiveIntensity: 0 }), x * 0.78, lerp(r.y, y, 0.78) - 0.009, lerp(r.z, z, 0.78));
+    led.castShadow = false; (front ? DR.front : DR.rear).push(led);
   });
-  // gimbal camera (separate group, stabilised)
-  const yoke = add(gimbal, new THREE.BoxGeometry(0.012, 0.03, 0.03), mDark, 0.031, -0.012, 0);
-  add(gimbal, new THREE.BoxGeometry(0.012, 0.03, 0.03), mDark, -0.031, -0.012, 0);
-  add(gimbal, new THREE.BoxGeometry(0.074, 0.008, 0.026), mDark, 0, 0.004, 0.004);
-  const camShape = new THREE.Shape(); const cw = 0.026, ch = 0.021, cr = 0.008;
-  camShape.moveTo(-cw + cr, -ch); camShape.lineTo(cw - cr, -ch); camShape.quadraticCurveTo(cw, -ch, cw, -ch + cr); camShape.lineTo(cw, ch - cr); camShape.quadraticCurveTo(cw, ch, cw - cr, ch); camShape.lineTo(-cw + cr, ch); camShape.quadraticCurveTo(-cw, ch, -cw, ch - cr); camShape.lineTo(-cw, -ch + cr); camShape.quadraticCurveTo(-cw, -ch, -cw + cr, -ch);
-  const camG = new THREE.ExtrudeGeometry(camShape, { depth: 0.032, bevelEnabled: true, bevelThickness: 0.004, bevelSize: 0.003, bevelSegments: 3 });
-  camG.translate(0, 0, -0.016);
-  add(gimbal, camG, mBody, 0, -0.024, -0.004);
-  const face = add(gimbal, new THREE.PlaneGeometry(0.05, 0.04), mDark, 0, -0.024, -0.0245); face.rotation.y = Math.PI;
-  const lensRing = add(gimbal, new THREE.CylinderGeometry(0.0175, 0.0185, 0.01, 32), mDark, -0.004, -0.027, -0.028); lensRing.rotation.x = Math.PI / 2;
-  const lensTrim = add(gimbal, new THREE.TorusGeometry(0.0162, 0.0012, 8, 40), mMetal, -0.004, -0.027, -0.0332);
-  const lens = add(gimbal, new THREE.CircleGeometry(0.0145, 32), mGlass, -0.004, -0.027, -0.0334); lens.rotation.y = Math.PI;
-  const tele = add(gimbal, new THREE.CylinderGeometry(0.0072, 0.0075, 0.008, 24), mDark, 0.017, -0.011, -0.027); tele.rotation.x = Math.PI / 2;
-  const teleG = add(gimbal, new THREE.CircleGeometry(0.0058, 24), mGlass, 0.017, -0.011, -0.0312); teleG.rotation.y = Math.PI;
+
+  // gimbal: yaw motor under the nose, one side arm down to the roll motor, and the camera head with the 24 mm main lens and the 162 mm tele
+  add(drone, new THREE.CylinderGeometry(0.012, 0.013, 0.008, 24), mDark, 0, GIMBAL_PIVOT.y + 0.034, GIMBAL_PIVOT.z + 0.004);
+  add(gimbalYoke, new THREE.BoxGeometry(0.038, 0.007, 0.016), mDark, 0.017, 0.031, 0.004);
+  add(gimbalYoke, new THREE.BoxGeometry(0.008, 0.034, 0.016), mDark, 0.034, 0.015, 0.004);
+  add(gimbalYoke, new THREE.CylinderGeometry(0.0115, 0.0115, 0.007, 24), mDark, 0.034, 0, 0.002).rotation.z = Math.PI / 2;
+  add(gimbal, new THREE.CylinderGeometry(0.006, 0.006, 0.004, 16), mDark, -0.03, 0, 0.002).rotation.z = Math.PI / 2;
+  const rrect = (w, h, r) => { const s = new THREE.Shape(); s.moveTo(-w + r, -h); s.lineTo(w - r, -h); s.quadraticCurveTo(w, -h, w, -h + r); s.lineTo(w, h - r); s.quadraticCurveTo(w, h, w - r, h); s.lineTo(-w + r, h); s.quadraticCurveTo(-w, h, -w, h - r); s.lineTo(-w, -h + r); s.quadraticCurveTo(-w, -h, -w + r, -h); return s; };
+  const camG = new THREE.ExtrudeGeometry(rrect(0.0265, 0.023, 0.009), { depth: 0.034, bevelEnabled: true, bevelThickness: 0.004, bevelSize: 0.0035, bevelSegments: 4, curveSegments: 12 });
+  camG.translate(0, 0, -0.017);
+  add(gimbal, camG, mArm);
+  const face = add(gimbal, new THREE.ShapeGeometry(rrect(0.024, 0.0205, 0.007), 12), mDark, 0, 0, -0.0212); face.rotation.y = Math.PI; face.castShadow = false;
+  const lensRing = add(gimbal, new THREE.CylinderGeometry(0.0168, 0.0178, 0.009, 40), mDark, -0.005, -0.002, -0.025); lensRing.rotation.x = Math.PI / 2;
+  add(gimbal, new THREE.TorusGeometry(0.0158, 0.0011, 8, 48), mMetal, -0.005, -0.002, -0.0296);
+  const lens = add(gimbal, new THREE.CircleGeometry(0.0146, 40), mCoat, -0.005, -0.002, -0.0298); lens.rotation.y = Math.PI; lens.castShadow = false;
+  add(gimbal, new THREE.TorusGeometry(0.008, 0.0012, 8, 32), mDark, -0.005, -0.002, -0.0299).castShadow = false;
+  const tele = add(gimbal, new THREE.CylinderGeometry(0.0066, 0.007, 0.007, 28), mDark, 0.0155, 0.0115, -0.0245); tele.rotation.x = Math.PI / 2;
+  const teleG = add(gimbal, new THREE.CircleGeometry(0.0052, 28), mCoat, 0.0155, 0.0115, -0.0282); teleG.rotation.y = Math.PI; teleG.castShadow = false;
+  add(gimbal, new THREE.CircleGeometry(0.0018, 12), mMetal, 0.016, -0.012, -0.0216).rotation.y = Math.PI;
 }
 // cheap blob shadow so altitude is readable even outside the shadow-map area
 const blobShadow = new THREE.Mesh(new THREE.CircleGeometry(0.28, 32), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.25, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -10, map: canvasTex(128, 128, (g, w, h) => { const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); }) }));
@@ -1546,15 +1668,16 @@ function updateHolds(dt) {
 const fmtT = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 
 /* ---------- cameras ---------- */
-const VIEW = { mode: 'chase', oy: 0, op: 0.2, dist: 2.6, chaseYaw: 0, off: new V3(0, 0.8, 2.6), pt: new V3(), pz: 1 };
+const VIEW = { mode: 'chase', oy: 0, op: 0.24, dist: 1.8, chaseYaw: 0, off: new V3(0, 0.6, 2.2), pt: new V3(), pz: 1, az: 1 };
 const VIEWNAME = { chase: 'Chase', fpv: 'Camera', pilot: 'Pilot' };
 function setView(m, quiet) { VIEW.mode = m; $('#viewLbl').textContent = VIEWNAME[m]; if (!quiet) toast({ chase: 'Chase view — camera behind the drone', fpv: 'Camera view — what the gimbal camera sees', pilot: 'Pilot view — line of sight from where you stand' }[m]); if (L.cur) L.st.view = m; }
 function cycleView() { const o = ['chase', 'fpv', 'pilot']; setView(o[(o.indexOf(VIEW.mode) + 1) % 3]); }
 function fpvFov(aspect) { return 2 * Math.atan(Math.tan(42 * DEG) / Math.sqrt(1 + aspect * aspect) / D.zoom) / DEG; }
 const _gp = new V3(), _q = new THREE.Quaternion();
 function updateCameras(dt, aspect) {
-  fpvCam.position.copy(gimbal.localToWorld(_gp.set(-0.004, -0.027, -0.04)));
+  fpvCam.position.copy(gimbal.localToWorld(_gp.set(-0.005, -0.002, -0.034)));
   fpvCam.quaternion.copy(gimbal.quaternion);
+  if (VIEW.dbg) { cam.position.set(...VIEW.dbg.pos); cam.lookAt(...VIEW.dbg.tgt); cam.fov = VIEW.dbg.fov || 35; cam.near = 0.01; return; } // ?debug inspection camera
   if (APP.paused && !APP.started) { // idle orbit behind the menu
     const t = performance.now() / 1000 * 0.07;
     cam.position.set(D.pos.x + Math.sin(t) * 3.6, D.pos.y + 1.25, D.pos.z + Math.cos(t) * 3.6); cam.lookAt(D.pos.x, D.pos.y + 0.25, D.pos.z); cam.fov = 45; return;
@@ -1562,25 +1685,42 @@ function updateCameras(dt, aspect) {
   if (VIEW.mode === 'fpv') { cam.position.copy(fpvCam.position); cam.quaternion.copy(fpvCam.quaternion); cam.fov = fpvFov(aspect); cam.near = 0.03; return; }
   cam.near = 0.05;
   if (VIEW.mode === 'chase') {
+    // pulls back and widens with speed, leads the turn a little, and never ends up inside a building
+    const hs = Math.min(21, Math.hypot(D.vel.x, D.vel.z));
     VIEW.chaseYaw += wrapPi(D.yaw - VIEW.chaseYaw) * (1 - Math.exp(-dt * 2.4));
-    const yaw = VIEW.chaseYaw + VIEW.oy, p = VIEW.op, dd = VIEW.dist;
+    const yaw = VIEW.chaseYaw + VIEW.oy, p = VIEW.op, dd = VIEW.dist * (1 + hs * 0.025);
     _tmpV.set(-Math.sin(yaw) * Math.cos(p) * dd, Math.sin(p) * dd + 0.12, Math.cos(yaw) * Math.cos(p) * dd);
     VIEW.off.lerp(_tmpV, 1 - Math.exp(-dt * 8));
     cam.position.copy(D.pos).add(VIEW.off);
+    clipCam(D.pos, cam.position);
     const g = groundAt(cam.position.x, cam.position.z) + 0.25; if (cam.position.y < g) cam.position.y = g;
-    cam.lookAt(D.pos.x, D.pos.y + 0.1, D.pos.z); cam.fov = 62;
+    cam.lookAt(D.pos.x + D.vel.x * 0.05, D.pos.y + 0.08, D.pos.z + D.vel.z * 0.05); cam.fov = 58 + hs * 0.35;
   } else {
-    cam.position.set(PILOT.x, PILOT.y + 1.62, PILOT.z);
+    // your eyes: head turns smoothly after the drone; far away it zooms in a little, like squinting at a speck
+    cam.position.set(PILOT.x, PILOT.y + 1.66, PILOT.z);
     VIEW.pt.lerp(D.pos, 1 - Math.exp(-dt * 7));
-    cam.lookAt(VIEW.pt); cam.fov = 56 / VIEW.pz;
+    VIEW.az = lerp(VIEW.az, clamp(cam.position.distanceTo(D.pos) / 40, 1, 3), 1 - Math.exp(-dt * 1.5));
+    cam.lookAt(VIEW.pt); cam.fov = 52 / (VIEW.pz * VIEW.az);
   }
+}
+// pull the chase camera in front of any wall or roof between it and the drone (ray vs the nearby building boxes)
+function clipCam(a, b) {
+  const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z, len = Math.hypot(dx, dy, dz); if (len < 0.01) return;
+  const ux = dx / len, uy = dy / len, uz = dz / len; let tMin = len;
+  for (const o of NEAR) {
+    if (o.k !== 0) continue;
+    let t0 = 0, t1 = len;
+    const slab = (p, d, c, h) => { if (Math.abs(d) < 1e-6) return Math.abs(p - c) <= h; let ta = (c - h - p) / d, tb = (c + h - p) / d; if (ta > tb) { const s = ta; ta = tb; tb = s; } t0 = Math.max(t0, ta); t1 = Math.min(t1, tb); return t0 <= t1; };
+    if (slab(a.x, ux, o.cx, o.hx + 0.2) && slab(a.y, uy, o.cy, o.hy + 0.2) && slab(a.z, uz, o.cz, o.hz + 0.2) && t0 > 0 && t0 < tMin) tMin = t0;
+  }
+  if (tMin < len) { const t = Math.max(0.35, tMin); b.set(a.x + ux * t, a.y + uy * t, a.z + uz * t); }
 }
 { // mouse orbit / zoom on the 3D view
   let drag = null;
   glCanvas.addEventListener('pointerdown', e => { initAudio(); if (e.pointerType === 'touch' && touchSticksOn()) return; drag = { x: e.clientX, y: e.clientY }; glCanvas.setPointerCapture(e.pointerId); });
   glCanvas.addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag = { x: e.clientX, y: e.clientY }; if (VIEW.mode === 'chase') { VIEW.oy -= dx * 0.006; VIEW.op = clamp(VIEW.op + dy * 0.005, -0.25, 1.35); } });
   glCanvas.addEventListener('pointerup', () => drag = null); glCanvas.addEventListener('pointercancel', () => drag = null);
-  glCanvas.addEventListener('dblclick', () => { VIEW.oy = 0; VIEW.op = 0.2; VIEW.dist = 2.6; VIEW.pz = 1; });
+  glCanvas.addEventListener('dblclick', () => { VIEW.oy = 0; VIEW.op = 0.24; VIEW.dist = 1.8; VIEW.pz = 1; });
   glCanvas.addEventListener('wheel', e => { e.preventDefault(); if (VIEW.mode === 'chase') VIEW.dist = clamp(VIEW.dist * (e.deltaY > 0 ? 1.1 : 0.9), 0.9, 30); else if (VIEW.mode === 'pilot') VIEW.pz = clamp(VIEW.pz * (e.deltaY > 0 ? 0.9 : 1.1), 1, 6); }, { passive: false });
 }
 
@@ -1606,6 +1746,7 @@ function updateDroneVisual(dt, t) {
   gimbal.position.copy(drone.localToWorld(_gp.copy(GIMBAL_PIVOT)));
   if (D.crashed) gimbal.quaternion.copy(drone.quaternion);
   else { VIEW.gy = (VIEW.gy ?? -D.yaw) + wrapPi(-D.yaw - (VIEW.gy ?? -D.yaw)) * (1 - Math.exp(-dt * 14)); gimbal.rotation.set(D.gimbal * DEG, VIEW.gy, Math.sin(t * 9) * 0.0008 * (D.airborne ? 1 : 0), 'YXZ'); }
+  gimbalYoke.position.copy(gimbal.position); gimbalYoke.quaternion.copy(drone.quaternion);
   const g = groundAt(D.pos.x, D.pos.z), a = D.pos.y - g;
   blobShadow.position.set(D.pos.x, g + 0.03, D.pos.z); const s = 1 + a * 0.06; blobShadow.scale.set(s, s, s); blobShadow.material.opacity = clamp(0.3 - a * 0.012, 0, 0.3);
 }
@@ -1744,8 +1885,8 @@ function drawOverlay(W, H) {
     c.strokeStyle = 'rgba(255,255,255,.18)'; c.lineWidth = 1; c.strokeRect(W * .02, H * .04, W * .96, H * .92);
   }
   if ((VIEW.mode === 'fpv' || VIEW.mode === 'chase') && D.airborne && !D.crashed) {
-    const R = Math.min(W, H) * 0.3, cx = W / 2, cy = H / 2;
     if (!avoidOn()) return;
+    const R = Math.min(W, H) * 0.3, pd = VIEW.mode === 'chase' ? proj(D.pos, W, H) : null, cx = pd ? pd.x : W / 2, cy = pd ? pd.y : H / 2;
     for (let i = 0; i < 8; i++) {
       const d = D.radar[i]; if (d > 14) continue;
       const a = -Math.PI / 2 + i * Math.PI / 4; c.strokeStyle = d < 3 ? '#ff5257' : d < 7 ? '#f5a524' : 'rgba(255,230,120,.75)';
@@ -1767,153 +1908,209 @@ function rcLabels() {
 const rcScene = new THREE.Scene();
 rcScene.environment = scene.environment;
 const rcCam = new THREE.PerspectiveCamera(25, 1.4, 10, 4000);
-rcScene.add(new THREE.HemisphereLight(0xf2f2f0, 0x2a2b2d, 0.8));
-{ const k = new THREE.DirectionalLight(0xfff6ea, 2.4); k.position.set(-160, 320, 220); rcScene.add(k); const r = new THREE.DirectionalLight(0xc4d8ff, 1.3); r.position.set(220, 140, -260); rcScene.add(r); const f = new THREE.DirectionalLight(0xffffff, 0.5); f.position.set(0, 60, 400); rcScene.add(f); }
+rcScene.add(new THREE.HemisphereLight(0xeef2f6, 0x1c1d20, 0.7));
+{ // key from the front-left, cool rims from behind to lift the silhouette off the scene, a soft fill from the pilot
+  const k = new THREE.DirectionalLight(0xfff4e6, 2.6); k.position.set(-180, 340, 260); rcScene.add(k);
+  const r = new THREE.DirectionalLight(0xd2e2ff, 2.4); r.position.set(170, 110, -330); rcScene.add(r);
+  const r2 = new THREE.DirectionalLight(0xd2e2ff, 1.3); r2.position.set(-220, 70, -220); rcScene.add(r2);
+  const f = new THREE.DirectionalLight(0xffffff, 0.5); f.position.set(0, 80, 420); rcScene.add(f);
+}
 const RC = { root: new THREE.Group(), well: { L: new V3(-45, 0, -4), R: new V3(45, 0, -4) }, pivot: {}, ghost: {}, hl: {}, hits: [], press: {}, anchors: {}, travel: 27 * DEG, knobX: { C: -7, N: 0, S: 7 } };
 rcScene.add(RC.root);
-const rcRT = new THREE.WebGLRenderTarget(640, 360, { samples: 4 });
+const RC_ASPECT = 2.22; // phone screen, about 20:9
+const rcRT = new THREE.WebGLRenderTarget(800, 360, { samples: 4 });
 {
   const TOP = 8; RC.top = TOP;
-  const plastic = new THREE.MeshPhysicalMaterial({ color: 0x313235, roughness: 0.6, metalness: 0.05, clearcoat: 0.12, clearcoatRoughness: 0.6, envMapIntensity: 0.3 });
-  const plastic2 = new THREE.MeshStandardMaterial({ color: 0x1e1f21, roughness: 0.5, metalness: 0.1, envMapIntensity: 0.4 });
+  const grain = canvasTex(256, 256, (g, w, h) => { const im = g.createImageData(w, h); for (let i = 0; i < w * h; i++) { const v = 128 + (Math.random() - 0.5) * 70; im.data[i * 4] = im.data[i * 4 + 1] = im.data[i * 4 + 2] = v; im.data[i * 4 + 3] = 255; } g.putImageData(im, 0, 0); }, { srgb: false, repeat: [3, 3] });
+  const shell = new THREE.MeshPhysicalMaterial({ color: 0x37393d, roughness: 0.6, metalness: 0.05, clearcoat: 0.18, clearcoatRoughness: 0.5, bumpMap: grain, bumpScale: 0.3, envMapIntensity: 0.5 });
+  const back = new THREE.MeshStandardMaterial({ color: 0x2a2c30, roughness: 0.78, metalness: 0.05, bumpMap: grain, bumpScale: 0.7, envMapIntensity: 0.35 });
+  const plastic2 = new THREE.MeshStandardMaterial({ color: 0x1c1d20, roughness: 0.45, metalness: 0.1, envMapIntensity: 0.5 });
+  const capC = new THREE.MeshStandardMaterial({ color: 0x2b2e32, roughness: 0.42, metalness: 0.1, envMapIntensity: 0.6 });
   const rubber = new THREE.MeshStandardMaterial({ color: 0x141517, roughness: 0.92 });
-  const metal = new THREE.MeshStandardMaterial({ color: 0xa8aeb5, roughness: 0.28, metalness: 0.92 });
-  const knurl = canvasTex(128, 128, (g, w, h) => { g.fillStyle = '#808080'; g.fillRect(0, 0, w, h); g.strokeStyle = '#202020'; g.lineWidth = 3; for (let i = -h; i < w + h; i += 10) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i + h, h); g.stroke(); g.beginPath(); g.moveTo(i, h); g.lineTo(i + h, 0); g.stroke(); } }, { srgb: false, repeat: [6, 1] });
+  const metal = new THREE.MeshStandardMaterial({ color: 0xb4bac2, roughness: 0.25, metalness: 0.95 });
+  const satin = new THREE.MeshStandardMaterial({ color: 0x8e949c, roughness: 0.32, metalness: 0.85 });
+  const knurl = canvasTex(128, 128, (g, w, h) => { g.fillStyle = '#808080'; g.fillRect(0, 0, w, h); g.strokeStyle = '#202020'; g.lineWidth = 3; for (let i = -h; i < w + h; i += 10) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i + h, h); g.stroke(); g.beginPath(); g.moveTo(i, h); g.lineTo(i + h, 0); g.stroke(); } }, { srgb: false, repeat: [8, 1] });
   const add = (geo, mat, x = 0, y = 0, z = 0, parent = RC.root) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); parent.add(m); return m; };
   const hlMat = (id, base) => { const m = base.clone(); (RC.hl[id] = RC.hl[id] || []).push(m); return m; };
+  const invis = () => new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false });
+  const rrect = (w, h, r) => { const s = new THREE.Shape(); s.moveTo(-w + r, -h); s.lineTo(w - r, -h); s.quadraticCurveTo(w, -h, w, -h + r); s.lineTo(w, h - r); s.quadraticCurveTo(w, h, w - r, h); s.lineTo(-w + r, h); s.quadraticCurveTo(-w, h, -w, h - r); s.lineTo(-w, -h + r); s.quadraticCurveTo(-w, -h, -w + r, -h); return s; };
 
-  // body: top-view outline with grips, holes for the stick wells, extruded downward with a soft bevel
-  const sh = new THREE.Shape();
-  sh.moveTo(-60, -50); sh.lineTo(60, -50); sh.quadraticCurveTo(76, -50, 77, -34); sh.lineTo(78, 18);
-  sh.bezierCurveTo(79, 46, 72, 62, 52, 63); sh.bezierCurveTo(38, 63, 32, 52, 26, 44); sh.lineTo(-26, 44);
-  sh.bezierCurveTo(-32, 52, -38, 63, -52, 63); sh.bezierCurveTo(-72, 62, -79, 46, -78, 18); sh.lineTo(-77, -34); sh.quadraticCurveTo(-76, -50, -60, -50);
-  for (const s of ['L', 'R']) { const p = new THREE.Path(); p.absarc(RC.well[s].x, RC.well[s].z, 16, 0, Math.PI * 2, true); sh.holes.push(p); }
-  const body = new THREE.ExtrudeGeometry(sh, { depth: 26, bevelEnabled: true, bevelThickness: 8, bevelSize: 7, bevelSegments: 7, curveSegments: 40 });
-  body.rotateX(Math.PI / 2);
-  add(body, plastic);
-  // seam line around the sides
-  const seam = new THREE.Mesh(new THREE.ExtrudeGeometry(sh, { depth: 0.6, bevelEnabled: true, bevelThickness: 0.1, bevelSize: 7.4, bevelSegments: 1, curveSegments: 40 }).rotateX(Math.PI / 2), plastic2);
-  seam.position.y = -14; RC.root.add(seam);
+  // top-view outline: wide top edge, rounded shoulders, two grips with a shallow notch between them
+  const outline = () => {
+    const sh = new THREE.Shape();
+    sh.moveTo(-58, -51); sh.quadraticCurveTo(0, -55.5, 58, -51); sh.quadraticCurveTo(75, -50, 76.5, -35); sh.lineTo(77.5, 16);
+    sh.bezierCurveTo(78.5, 44, 70, 62, 52, 63); sh.bezierCurveTo(38, 64, 31, 54, 25, 46.5); sh.quadraticCurveTo(0, 39, -25, 46.5);
+    sh.bezierCurveTo(-31, 54, -38, 64, -52, 63); sh.bezierCurveTo(-70, 62, -78.5, 44, -77.5, 16); sh.lineTo(-76.5, -35); sh.quadraticCurveTo(-75, -50, -58, -51);
+    return sh;
+  };
+  // face plate: thin with a crisp bevel and openings for the stick wells
+  const fsh = outline(); for (const s of ['L', 'R']) { const p = new THREE.Path(); p.absarc(RC.well[s].x, RC.well[s].z, 16.5, 0, Math.PI * 2, true); fsh.holes.push(p); }
+  const faceG = new THREE.ExtrudeGeometry(fsh, { depth: 4, bevelEnabled: true, bevelThickness: 3, bevelSize: 3, bevelSegments: 5, curveSegments: 56 });
+  faceG.rotateX(Math.PI / 2); faceG.translate(0, TOP - 3, 0); add(faceG, shell);
+  // back shell: deeper, softer and darker, inset a touch so a seam shows between the halves
+  const backG = new THREE.ExtrudeGeometry(outline(), { depth: 12, bevelEnabled: true, bevelThickness: 11, bevelSize: 5, bevelSegments: 8, curveSegments: 56 });
+  backG.rotateX(Math.PI / 2); backG.scale(0.975, 1, 0.97); backG.translate(0, -13.6, 0); add(backG, back);
+  // stick-storage slots on the grips and the antenna windows on the top edge
+  for (const s of [-1, 1]) {
+    const slot = add(new THREE.CapsuleGeometry(2.2, 14, 4, 12), rubber, s * 52, -12, 61.5); slot.rotation.x = Math.PI / 2; slot.rotation.z = s * 0.5; slot.scale.set(1, 1, 0.5);
+  }
 
   // printed markings on the face
-  const PX = 8, W0 = -80, Z0 = -52, PW = 160, PD = 118;
+  const PX = 8, W0 = -80, Z0 = -56, PW = 160, PD = 122;
   const face = canvasTex(PW * PX, PD * PX, (g, w, h) => {
     const X = x => (x - W0) * PX, Zc = z => (z - Z0) * PX;
     g.clearRect(0, 0, w, h);
-    g.fillStyle = 'rgba(210,216,222,.78)'; g.font = `700 ${4.2 * PX}px Barlow Condensed, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
-    g.fillText('C', X(8), Zc(-41)); g.fillText('N', X(15), Zc(-41)); g.fillText('S', X(22), Zc(-41));
-    g.strokeStyle = 'rgba(210,216,222,.35)'; g.lineWidth = 0.5 * PX;
-    for (const s of ['L', 'R']) { const c = RC.well[s]; g.beginPath(); g.arc(X(c.x), Zc(c.z), 21 * PX, 0, Math.PI * 2); g.stroke(); for (let a = 0; a < 4; a++) { const an = a * Math.PI / 2; g.beginPath(); g.moveTo(X(c.x) + Math.cos(an) * 19 * PX, Zc(c.z) + Math.sin(an) * 19 * PX); g.lineTo(X(c.x) + Math.cos(an) * 23 * PX, Zc(c.z) + Math.sin(an) * 23 * PX); g.stroke(); } }
-    g.fillStyle = 'rgba(210,216,222,.6)'; g.font = `600 ${3 * PX}px Barlow Condensed, sans-serif`;
-    g.fillText('Fn', X(-14), Zc(35.5)); g.fillText('▶ / ◉', X(14), Zc(35.5));
+    g.fillStyle = 'rgba(214,220,226,.82)'; g.font = `700 ${4 * PX}px Barlow Condensed, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText('C', X(8), Zc(-41.5)); g.fillText('N', X(15), Zc(-41.5)); g.fillText('S', X(22), Zc(-41.5));
+    for (const s of ['L', 'R']) {
+      const c = RC.well[s]; g.strokeStyle = 'rgba(214,220,226,.22)'; g.lineWidth = 0.45 * PX;
+      g.beginPath(); g.arc(X(c.x), Zc(c.z), 22 * PX, 0, Math.PI * 2); g.stroke();
+      g.strokeStyle = 'rgba(214,220,226,.5)'; g.lineWidth = 0.6 * PX;
+      for (let a = 0; a < 4; a++) { const an = a * Math.PI / 2; g.beginPath(); g.moveTo(X(c.x) + Math.cos(an) * 20.5 * PX, Zc(c.z) + Math.sin(an) * 20.5 * PX); g.lineTo(X(c.x) + Math.cos(an) * 23.5 * PX, Zc(c.z) + Math.sin(an) * 23.5 * PX); g.stroke(); }
+    }
+    g.fillStyle = 'rgba(214,220,226,.62)'; g.font = `600 ${2.8 * PX}px Barlow Condensed, sans-serif`;
+    g.fillText('Fn', X(-14), Zc(35.5));
+    g.strokeStyle = 'rgba(214,220,226,.62)'; g.lineWidth = 0.45 * PX; // photo/video icon
+    g.strokeRect(X(10.4), Zc(34.2), 4.4 * PX, 2.8 * PX); g.beginPath(); g.moveTo(X(15.2), Zc(35.6)); g.lineTo(X(17.6), Zc(34.4)); g.lineTo(X(17.6), Zc(36.8)); g.closePath(); g.stroke();
+    g.strokeStyle = 'rgba(214,220,226,.28)'; g.lineWidth = 0.35 * PX; g.beginPath(); g.moveTo(X(-6), Zc(-24)); g.lineTo(X(6), Zc(-24)); g.stroke();
   });
-  const fp = new THREE.Mesh(new THREE.PlaneGeometry(PW, PD), new THREE.MeshStandardMaterial({ map: face, transparent: true, roughness: 0.7, polygonOffset: true, polygonOffsetFactor: -2 }));
+  const fp = new THREE.Mesh(new THREE.PlaneGeometry(PW, PD), new THREE.MeshStandardMaterial({ map: face, transparent: true, depthWrite: false, roughness: 0.6, polygonOffset: true, polygonOffsetFactor: -2 }));
   fp.rotation.x = -Math.PI / 2; fp.position.set(W0 + PW / 2, TOP + 0.05, Z0 + PD / 2); RC.root.add(fp);
 
-  // stick wells: bezel, recess, rubber boot, gimbal, removable stick with knurled cap
+  // stick wells: satin rim, rubber boot, gimbal ball, short shaft and a grippy cap with a raised lip
+  const capTop = canvasTex(128, 128, (g, w, h) => { g.fillStyle = '#1b1d20'; g.fillRect(0, 0, w, h); g.strokeStyle = 'rgba(255,255,255,.07)'; g.lineWidth = 2; for (let r = 8; r < 64; r += 7) { g.beginPath(); g.arc(64, 64, r, 0, 7); g.stroke(); } });
   for (const s of ['L', 'R']) {
     const c = RC.well[s];
-    const bez = add(new THREE.TorusGeometry(16, 1.8, 14, 64), hlMat('well' + s, plastic2), c.x, TOP + 0.2, c.z); bez.rotation.x = Math.PI / 2;
-    const wall = add(new THREE.CylinderGeometry(16, 15, 9, 48, 1, true), new THREE.MeshStandardMaterial({ color: 0x101113, roughness: 0.8, side: THREE.BackSide }), c.x, TOP - 4.5, c.z);
-    add(new THREE.CircleGeometry(15, 48), rubber, c.x, TOP - 9, c.z).rotation.x = -Math.PI / 2;
-    const boot = add(new THREE.SphereGeometry(12, 40, 16, 0, Math.PI * 2, 0, Math.PI / 2), rubber, c.x, TOP - 9, c.z); boot.scale.y = 0.55;
-    const pv = new THREE.Group(); pv.position.set(c.x, TOP - 4, c.z); RC.root.add(pv); RC.pivot[s] = pv;
-    add(new THREE.CylinderGeometry(4.5, 5.5, 4, 24), plastic2, 0, 1.5, 0, pv);
-    add(new THREE.CylinderGeometry(1.9, 2.1, 22, 16), metal, 0, 13, 0, pv);
-    const capMat = new THREE.MeshStandardMaterial({ color: 0x3a3e44, roughness: 0.55, metalness: 0.35, bumpMap: knurl, bumpScale: 0.6 });
-    add(new THREE.CylinderGeometry(7.6, 7.2, 5.5, 48), capMat, 0, 25, 0, pv);
-    const dish = add(new THREE.CylinderGeometry(7.2, 7.6, 0.8, 48), new THREE.MeshStandardMaterial({ color: 0x24272b, roughness: 0.6 }), 0, 28.1, 0, pv);
-    add(new THREE.TorusGeometry(5, 0.35, 8, 40), metal, 0, 28.6, 0, pv).rotation.x = Math.PI / 2;
+    const rim = add(new THREE.TorusGeometry(17.1, 0.6, 10, 72), hlMat('well' + s, satin), c.x, TOP + 0.25, c.z); rim.rotation.x = Math.PI / 2;
+    const boot = add(new THREE.SphereGeometry(12.5, 40, 16, 0, Math.PI * 2, 0, Math.PI / 2), rubber, c.x, -2.6, c.z); boot.scale.y = 0.5;
+    const pv = new THREE.Group(); pv.position.set(c.x, -1, c.z); RC.root.add(pv); RC.pivot[s] = pv;
+    add(new THREE.SphereGeometry(5.2, 24, 16), plastic2, 0, 1, 0, pv);
+    add(new THREE.CylinderGeometry(1.7, 2.1, 20, 20), metal, 0, 10, 0, pv);
+    const capMat = new THREE.MeshStandardMaterial({ color: 0x2c2f34, roughness: 0.6, metalness: 0.25, bumpMap: knurl, bumpScale: 0.5 });
+    add(new THREE.CylinderGeometry(7.2, 6.5, 4.4, 48), capMat, 0, 21, 0, pv);
+    add(new THREE.TorusGeometry(6.6, 0.8, 10, 48), capMat, 0, 23.1, 0, pv).rotation.x = Math.PI / 2;
+    add(new THREE.CircleGeometry(6.5, 48), new THREE.MeshStandardMaterial({ map: capTop, roughness: 0.8 }), 0, 22.6, 0, pv).rotation.x = -Math.PI / 2;
     const gp = new THREE.Group(); gp.position.copy(pv.position); RC.root.add(gp); RC.ghost[s] = gp;
-    add(new THREE.CylinderGeometry(7.8, 7.8, 6, 32), new THREE.MeshBasicMaterial({ color: 0xf5a524, transparent: true, opacity: 0.45, depthWrite: false }), 0, 25, 0, gp);
-    add(new THREE.CylinderGeometry(1.2, 1.2, 22, 8), new THREE.MeshBasicMaterial({ color: 0xf5a524, transparent: true, opacity: 0.35, depthWrite: false }), 0, 13, 0, gp);
+    add(new THREE.CylinderGeometry(7.6, 7.6, 5.4, 32), new THREE.MeshBasicMaterial({ color: 0xf5a524, transparent: true, opacity: 0.45, depthWrite: false }), 0, 21.5, 0, gp);
+    add(new THREE.CylinderGeometry(1.2, 1.2, 20, 8), new THREE.MeshBasicMaterial({ color: 0xf5a524, transparent: true, opacity: 0.35, depthWrite: false }), 0, 10, 0, gp);
     gp.visible = false;
-    const hit = add(new THREE.CircleGeometry(30, 24), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }), c.x, TOP + 20, c.z); hit.rotation.x = -Math.PI / 2; hit.userData.act = 'well' + s; RC.hits.push(hit);
+    const hit = add(new THREE.CircleGeometry(30, 24), invis(), c.x, TOP + 15, c.z); hit.rotation.x = -Math.PI / 2; hit.userData.act = 'well' + s; RC.hits.push(hit);
     RC.anchors['well' + s] = c.clone().setY(TOP);
   }
-  const btnTex = (draw) => canvasTex(128, 128, (g, w, h) => { g.fillStyle = '#26292d'; g.fillRect(0, 0, w, h); g.strokeStyle = g.fillStyle = '#e6eaee'; g.lineWidth = 9; g.lineCap = 'round'; draw(g, w, h); });
+  // round buttons: dark bezel, cap with a rounded top edge and a printed icon
+  const btnTex = (draw) => canvasTex(128, 128, (g, w, h) => { g.fillStyle = '#2b2e32'; g.fillRect(0, 0, w, h); g.strokeStyle = g.fillStyle = '#e6eaee'; g.lineWidth = 9; g.lineCap = 'round'; draw(g, w, h); });
   function button(id, x, z, r, tex, act) {
     const grp = new THREE.Group(); grp.position.set(x, TOP, z); RC.root.add(grp);
-    const ring = add(new THREE.TorusGeometry(r + 0.9, 0.8, 10, 40), hlMat(id, plastic2), 0, 0.2, 0, grp); ring.rotation.x = Math.PI / 2;
+    const ring = add(new THREE.TorusGeometry(r + 1.1, 0.75, 10, 44), hlMat(id, plastic2), 0, 0.1, 0, grp); ring.rotation.x = Math.PI / 2;
+    add(new THREE.CircleGeometry(r + 1, 40), rubber, 0, 0.02, 0, grp).rotation.x = -Math.PI / 2;
     const cap = new THREE.Group(); grp.add(cap);
-    add(new THREE.CylinderGeometry(r, r, 2.6, 40), new THREE.MeshStandardMaterial({ color: 0x26292d, roughness: 0.45 }), 0, 1.1, 0, cap);
-    if (tex) add(new THREE.CircleGeometry(r * 0.98, 40), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.5 }), 0, 2.42, 0, cap).rotation.x = -Math.PI / 2;
-    const hit = add(new THREE.CylinderGeometry(r + 3, r + 3, 6, 16), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }), 0, 2, 0, grp); hit.userData.act = act;
+    add(new THREE.CylinderGeometry(r - 0.5, r, 2.2, 40), capC, 0, 1.1, 0, cap);
+    add(new THREE.TorusGeometry(r - 0.55, 0.5, 8, 40), capC, 0, 2.2, 0, cap).rotation.x = Math.PI / 2;
+    if (tex) add(new THREE.CircleGeometry(r - 0.55, 40), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.45 }), 0, 2.71, 0, cap).rotation.x = -Math.PI / 2;
+    const hit = add(new THREE.CylinderGeometry(r + 3, r + 3, 6, 16), invis(), 0, 2, 0, grp); hit.userData.act = act;
     RC.hits.push(hit); RC.press[id] = { cap, t: 0 }; RC.anchors[id] = new V3(x, TOP, z); return grp;
   }
   // Flight Pause / RTH (top-left of centre), power + battery LEDs (centre), flight-mode switch (top-right of centre)
-  button('rcRth', -15, -36, 5.5, btnTex((g, w, h) => { g.beginPath(); g.moveTo(44, 34); g.lineTo(44, 94); g.moveTo(84, 34); g.lineTo(84, 94); g.moveTo(44, 64); g.lineTo(84, 64); g.stroke(); }), 'rth');
-  button('rcPower', 0, -14, 4.6, btnTex((g, w, h) => { g.beginPath(); g.arc(64, 68, 30, -Math.PI * 0.32 - Math.PI / 2 + Math.PI, Math.PI * 0.32 - Math.PI / 2 + Math.PI * 3, false); g.stroke(); g.beginPath(); g.moveTo(64, 26); g.lineTo(64, 62); g.stroke(); }), 'power');
+  button('rcRth', -15, -36, 5.5, btnTex(g => { g.beginPath(); g.moveTo(44, 34); g.lineTo(44, 94); g.moveTo(84, 34); g.lineTo(84, 94); g.moveTo(44, 64); g.lineTo(84, 64); g.stroke(); }), 'rth');
+  button('rcPower', 0, -14, 4.6, btnTex(g => { g.beginPath(); g.arc(64, 68, 30, -Math.PI * 0.32 - Math.PI / 2 + Math.PI, Math.PI * 0.32 - Math.PI / 2 + Math.PI * 3, false); g.stroke(); g.beginPath(); g.moveTo(64, 26); g.lineTo(64, 62); g.stroke(); }), 'power');
   RC.leds = [];
-  for (let i = 0; i < 4; i++) { const m = add(new THREE.BoxGeometry(2.6, 0.6, 1.2), new THREE.MeshStandardMaterial({ color: 0x0b0b0b, emissive: 0x2bff6a, emissiveIntensity: 2.2 }), -6.6 + i * 4.4, TOP + 0.3, -5); RC.leds.push(m); }
-  { // 3-position flight mode switch
-    const slot = add(new THREE.BoxGeometry(24, 1.2, 6.5), new THREE.MeshStandardMaterial({ color: 0x0d0e10, roughness: 0.8 }), 15, TOP - 0.2, -34);
-    const glow = add(new THREE.BoxGeometry(27, 0.4, 9.5), hlMat('rcMode', new THREE.MeshStandardMaterial({ color: 0x1f2125, roughness: 0.5, transparent: true, opacity: 0.9 })), 15, TOP + 0.05, -34);
+  for (let i = 0; i < 4; i++) { add(new THREE.BoxGeometry(3.2, 0.3, 1.8), rubber, -6.6 + i * 4.4, TOP + 0.05, -5); const m = add(new THREE.BoxGeometry(2.4, 0.6, 1.1), new THREE.MeshStandardMaterial({ color: 0x0b0b0b, emissive: 0x2bff6a, emissiveIntensity: 2.4 }), -6.6 + i * 4.4, TOP + 0.3, -5); RC.leds.push(m); }
+  { // 3-position flight mode switch in a recessed slot
+    add(new THREE.ExtrudeGeometry(rrect(13.5, 4.6, 4.2), { depth: 0.6, bevelEnabled: false }).rotateX(-Math.PI / 2), hlMat('rcMode', plastic2), 15, TOP + 0.02, -34);
+    add(new THREE.ExtrudeGeometry(rrect(12, 3.2, 3), { depth: 0.6, bevelEnabled: false }).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x08090a, roughness: 0.9 }), 15, TOP + 0.08, -34);
     const knob = new THREE.Group(); knob.position.set(15, TOP, -34); RC.root.add(knob); RC.knob = knob;
-    const kg = new THREE.ExtrudeGeometry(new THREE.Shape().moveTo(-2.6, -2.6).lineTo(2.6, -2.6).lineTo(2.6, 2.6).lineTo(-2.6, 2.6).closePath(), { depth: 3, bevelEnabled: true, bevelThickness: 0.8, bevelSize: 0.8, bevelSegments: 3 });
-    kg.rotateX(-Math.PI / 2); add(kg, new THREE.MeshStandardMaterial({ color: 0xc8ced4, roughness: 0.35, metalness: 0.6 }), 0, 0.2, 0, knob);
-    for (const m of ['C', 'N', 'S']) { const hit = add(new THREE.BoxGeometry(8, 6, 14), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }), 15 + RC.knobX[m], TOP + 2, -36); hit.userData.act = 'mode' + m; RC.hits.push(hit); }
+    const kg = new THREE.ExtrudeGeometry(rrect(2.6, 2.6, 1.2), { depth: 3, bevelEnabled: true, bevelThickness: 0.8, bevelSize: 0.7, bevelSegments: 3 });
+    kg.rotateX(-Math.PI / 2); add(kg, new THREE.MeshStandardMaterial({ color: 0xc8ced4, roughness: 0.3, metalness: 0.7 }), 0, 0.2, 0, knob);
+    for (let i = -1; i <= 1; i++) add(new THREE.BoxGeometry(3.6, 0.3, 0.5), plastic2, 0, 4.15, i * 1.3, knob);
+    for (const m of ['C', 'N', 'S']) { const hit = add(new THREE.BoxGeometry(8, 6, 14), invis(), 15 + RC.knobX[m], TOP + 2, -36); hit.userData.act = 'mode' + m; RC.hits.push(hit); }
     RC.anchors.rcMode = new V3(15, TOP, -34);
   }
   // Fn and photo/video buttons, lower centre
   for (const [id, x, act] of [['rcFn', -14, 'fn'], ['rcPV', 14, 'pv']]) {
     const grp = new THREE.Group(); grp.position.set(x, TOP, 29); RC.root.add(grp);
-    const pill = new THREE.CapsuleGeometry(2.4, 6, 6, 16); pill.rotateZ(Math.PI / 2);
-    const cap = new THREE.Group(); grp.add(cap); const pm = add(pill, hlMat(id, new THREE.MeshStandardMaterial({ color: 0x24272b, roughness: 0.45 })), 0, 0.6, 0, cap); pm.scale.y = 0.6;
-    const hit = add(new THREE.BoxGeometry(16, 6, 10), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }), 0, 2, 0, grp); hit.userData.act = act; RC.hits.push(hit);
+    const bez = new THREE.CapsuleGeometry(3.3, 7, 6, 18); bez.rotateZ(Math.PI / 2); const bm = add(bez, rubber, 0, 0, 0, grp); bm.scale.y = 0.2;
+    const pill = new THREE.CapsuleGeometry(2.4, 6, 6, 18); pill.rotateZ(Math.PI / 2);
+    const cap = new THREE.Group(); grp.add(cap); const pm = add(pill, hlMat(id, capC), 0, 0.7, 0, cap); pm.scale.y = 0.55;
+    const hit = add(new THREE.BoxGeometry(16, 6, 10), invis(), 0, 2, 0, grp); hit.userData.act = act; RC.hits.push(hit);
     RC.press[id] = { cap, t: 0 }; RC.anchors[id] = new V3(x, TOP, 29);
   }
   // gimbal dial (top-left shoulder) and shutter/record button (top-right shoulder)
-  const ridge = canvasTex(256, 32, (g, w, h) => { for (let i = 0; i < 32; i++) { g.fillStyle = i % 2 ? '#3a3e44' : '#16181b'; g.fillRect(i * 8, 0, 8, h); } }, { srgb: true });
-  const dialG = new THREE.CylinderGeometry(8.5, 8.5, 11, 48); dialG.rotateZ(Math.PI / 2);
-  RC.dial = add(dialG, hlMat('rcDial', new THREE.MeshStandardMaterial({ map: ridge, bumpMap: ridge, bumpScale: 1, roughness: 0.5, metalness: 0.3 })), -56, -4, -54);
-  { const hit = add(new THREE.BoxGeometry(24, 22, 22), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }), -56, -2, -54); hit.userData.act = 'dial'; RC.hits.push(hit); RC.anchors.rcDial = new V3(-56, 6, -56); }
-  { const grp = new THREE.Group(); grp.position.set(56, -1, -56.5); RC.root.add(grp); const cap = new THREE.Group(); grp.add(cap);
-    const b = add(new THREE.CapsuleGeometry(4.2, 6, 6, 20), hlMat('rcShutter', new THREE.MeshStandardMaterial({ color: 0x3b3f45, roughness: 0.35, metalness: 0.4 })), 0, 0, 0, cap); b.rotation.z = Math.PI / 2; b.scale.set(1, 1, 0.75);
-    const hit = add(new THREE.BoxGeometry(22, 18, 18), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }), 0, 0, 0, grp); hit.userData.act = 'shutter'; RC.hits.push(hit);
+  const ridge = canvasTex(256, 32, (g, w, h) => { for (let i = 0; i < 32; i++) { g.fillStyle = i % 2 ? '#3d4147' : '#16181b'; g.fillRect(i * 8, 0, 8, h); } }, { srgb: true });
+  const dialG = new THREE.CylinderGeometry(8.6, 8.6, 11, 48); dialG.rotateZ(Math.PI / 2);
+  RC.dial = add(dialG, hlMat('rcDial', new THREE.MeshStandardMaterial({ map: ridge, bumpMap: ridge, bumpScale: 1, roughness: 0.5, metalness: 0.3 })), -56, 0, -55.5);
+  for (const s of [-1, 1]) add(new THREE.CylinderGeometry(9.2, 9.2, 0.8, 48), plastic2, -56 + s * 6, 0, -55.5).rotation.z = Math.PI / 2;
+  { const hit = add(new THREE.BoxGeometry(24, 22, 22), invis(), -56, -2, -54); hit.userData.act = 'dial'; RC.hits.push(hit); RC.anchors.rcDial = new V3(-56, 6, -56); }
+  { const grp = new THREE.Group(); grp.position.set(56, 3, -57); RC.root.add(grp); const cap = new THREE.Group(); grp.add(cap);
+    const b = add(new THREE.CapsuleGeometry(4.2, 6, 6, 20), hlMat('rcShutter', new THREE.MeshStandardMaterial({ color: 0x3d4147, roughness: 0.32, metalness: 0.45 })), 0, 0, 0, cap); b.rotation.z = Math.PI / 2; b.scale.set(1, 1, 0.75);
+    const hit = add(new THREE.BoxGeometry(22, 18, 18), invis(), 0, 0, 0, grp); hit.userData.act = 'shutter'; RC.hits.push(hit);
     RC.press.rcShutter = { cap, t: 0, axis: 'z' }; RC.anchors.rcShutter = new V3(56, 6, -58); }
-  // mobile-device holder + phone (screen = live camera feed with a DJI Fly-style status bar)
-  const holderM = new THREE.MeshStandardMaterial({ color: 0x25282c, roughness: 0.55, metalness: 0.15 });
-  add(new THREE.BoxGeometry(84, 10, 14), holderM, 0, -6, -57); add(new THREE.BoxGeometry(10, 46, 8), holderM, -30, 22, -64); add(new THREE.BoxGeometry(10, 46, 8), holderM, 30, 22, -64);
-  const phone = new THREE.Group(); phone.position.set(0, 66, -74); phone.rotation.x = -0.5; RC.root.add(phone); RC.phone = phone;
-  { const ps = new THREE.Shape(); const pw = 80, ph = 37, pr = 8; ps.moveTo(-pw + pr, -ph); ps.lineTo(pw - pr, -ph); ps.quadraticCurveTo(pw, -ph, pw, -ph + pr); ps.lineTo(pw, ph - pr); ps.quadraticCurveTo(pw, ph, pw - pr, ph); ps.lineTo(-pw + pr, ph); ps.quadraticCurveTo(-pw, ph, -pw, ph - pr); ps.lineTo(-pw, -ph + pr); ps.quadraticCurveTo(-pw, -ph, -pw + pr, -ph);
-    const pg = new THREE.ExtrudeGeometry(ps, { depth: 5, bevelEnabled: true, bevelThickness: 1.5, bevelSize: 1.5, bevelSegments: 4, curveSegments: 16 }); pg.translate(0, 0, -6.5);
-    add(pg, new THREE.MeshPhysicalMaterial({ color: 0x15171a, roughness: 0.3, metalness: 0.5, clearcoat: 0.6 }), 0, 0, 0, phone);
-    add(new THREE.PlaneGeometry(156, 70), new THREE.MeshBasicMaterial({ color: 0x000000 }), 0, 0, 0.02, phone);
-    RC.screen = add(new THREE.PlaneGeometry(148, 66.6), new THREE.MeshBasicMaterial({ map: rcRT.texture }), 0, 0, 0.06, phone);
-    RC.uiCanvas = document.createElement('canvas'); RC.uiCanvas.width = 1024; RC.uiCanvas.height = 460;
+
+  // mobile-device holder: hinge on the top edge, a centre column behind the phone, rubber-lined clamps top and bottom
+  const holderM = new THREE.MeshStandardMaterial({ color: 0x2a2c30, roughness: 0.5, metalness: 0.2, envMapIntensity: 0.5 });
+  const hinge = add(new THREE.CapsuleGeometry(4.5, 24, 6, 18), holderM, 0, 2, -56); hinge.rotation.z = Math.PI / 2;
+  const phone = new THREE.Group(); phone.position.set(0, 44, -72.5); phone.rotation.x = -0.42; RC.root.add(phone); RC.phone = phone;
+  {
+    add(new THREE.BoxGeometry(24, 74, 4.5), holderM, 0, -4, -11.5, phone);
+    add(new THREE.BoxGeometry(17, 40, 3), plastic2, 0, -6, -14.2, phone);
+    for (const s of [-1, 1]) {
+      const cl = add(new THREE.ExtrudeGeometry(rrect(28, 3.2, 2.6), { depth: 14, bevelEnabled: true, bevelThickness: 1, bevelSize: 1, bevelSegments: 3 }), holderM, 0, s * 41.2, -12, phone);
+      add(new THREE.BoxGeometry(50, 3.4, 1.6), holderM, 0, s * 39.8, 1.4, phone);
+      add(new THREE.BoxGeometry(48, 1, 10), rubber, 0, s * 38.1, -4.5, phone);
+    }
+    add(new THREE.BoxGeometry(24, 8, 9), holderM, 0, -45.5, -5.5, phone);
+    const pg = new THREE.ExtrudeGeometry(rrect(80, 37.5, 9), { depth: 6, bevelEnabled: true, bevelThickness: 1.5, bevelSize: 1.5, bevelSegments: 4, curveSegments: 16 }); pg.translate(0, 0, -7.5);
+    add(pg, new THREE.MeshPhysicalMaterial({ color: 0x17191c, roughness: 0.3, metalness: 0.6, clearcoat: 0.6 }), 0, 0, 0, phone);
+    add(new THREE.ShapeGeometry(rrect(78.6, 36.2, 8), 12), new THREE.MeshBasicMaterial({ color: 0x000000 }), 0, 0, 0.02, phone);
+    RC.screen = add(new THREE.PlaneGeometry(150, 67.6), new THREE.MeshBasicMaterial({ map: rcRT.texture }), 0, 0, 0.06, phone);
+    RC.uiCanvas = document.createElement('canvas'); RC.uiCanvas.width = 1024; RC.uiCanvas.height = 461;
     RC.uiTex = new THREE.CanvasTexture(RC.uiCanvas); RC.uiTex.colorSpace = THREE.SRGBColorSpace; RC.uiTex.anisotropy = MAX_ANISO;
-    add(new THREE.PlaneGeometry(148, 66.6), new THREE.MeshBasicMaterial({ map: RC.uiTex, transparent: true, toneMapped: false }), 0, 0, 0.1, phone);
-    add(new THREE.PlaneGeometry(156, 70), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.06, roughness: 0.05, metalness: 0, clearcoat: 1, depthWrite: false }), 0, 0, 0.14, phone);
-    // clamps
-    add(new THREE.BoxGeometry(46, 6, 10), holderM, 0, 40, -3, phone); add(new THREE.BoxGeometry(46, 6, 10), holderM, 0, -40, -3, phone);
-    add(new THREE.BoxGeometry(8, 84, 6), holderM, 0, 0, -8, phone);
-    RC.anchors.phone = new V3(0, 66, -74);
+    add(new THREE.PlaneGeometry(150, 67.6), new THREE.MeshBasicMaterial({ map: RC.uiTex, transparent: true, toneMapped: false }), 0, 0, 0.1, phone);
+    add(new THREE.ShapeGeometry(rrect(78.6, 36.2, 8), 12), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.07, roughness: 0.05, metalness: 0, clearcoat: 1, depthWrite: false }), 0, 0, 0.14, phone);
+    RC.anchors.phone = new V3(0, 44, -72.5);
   }
   RC.root.traverse(o => { if (o.isMesh) o.renderOrder = 1; });
 }
+PIL.screen.material.map = rcRT.texture; PIL.screen.material.color.set(0xffffff); PIL.screen.material.needsUpdate = true;
 function frameRC(aspect) {
-  rcCam.aspect = aspect; rcCam.fov = 25;
-  rcCam.position.set(0, 330, 330); rcCam.lookAt(0, 20, -24);
+  rcCam.aspect = aspect; rcCam.fov = 24;
+  rcCam.position.set(0, 315, 315); rcCam.lookAt(0, 20, -16); rcCam.fov = 25.5;
   rcCam.updateProjectionMatrix();
 }
 /* phone UI overlay (DJI Fly look) */
 function drawPhoneUI() {
   const c = RC.uiCanvas.getContext('2d'), w = c.canvas.width, h = c.canvas.height;
-  c.clearRect(0, 0, w, h);
-  const gr = c.createLinearGradient(0, 0, 0, 70); gr.addColorStop(0, 'rgba(0,0,0,.6)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = gr; c.fillRect(0, 0, w, 70);
+  c.clearRect(0, 0, w, h); c.textBaseline = 'middle'; c.textAlign = 'left';
+  const gr = c.createLinearGradient(0, 0, 0, 78); gr.addColorStop(0, 'rgba(0,0,0,.62)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = gr; c.fillRect(0, 0, w, 78);
+  // top bar: back, status pill, mode, satellites, signal, battery
+  c.strokeStyle = '#fff'; c.lineWidth = 4; c.lineCap = 'round'; c.beginPath(); c.moveTo(34, 20); c.lineTo(24, 32); c.lineTo(34, 44); c.stroke();
   const [st, sc] = statusOf();
-  c.fillStyle = sc === 'crit' ? 'rgba(255,82,87,.85)' : sc === 'warn' ? 'rgba(245,165,36,.85)' : 'rgba(46,170,96,.85)'; c.beginPath(); c.roundRect(14, 12, c.measureText ? 300 : 300, 38, 7); c.fill();
-  c.fillStyle = '#fff'; c.font = '600 24px Barlow Condensed, sans-serif'; c.textBaseline = 'middle'; c.fillText(st.slice(0, 28), 28, 32);
-  c.font = '700 24px JetBrains Mono, monospace'; c.textAlign = 'right'; c.fillText(`${D.mode}   ${D.sats}  ▮▮▮▮  ${Math.ceil(D.battery)}%`, w - 20, 32); c.textAlign = 'left';
-  if (D.rec) { c.fillStyle = '#ff5257'; c.fillText('● ' + fmtT(D.recT), w / 2 - 60, 32); }
-  c.strokeStyle = 'rgba(255,255,255,.7)'; c.lineWidth = 3; const cx = w / 2, cy = h / 2; c.beginPath(); c.moveTo(cx - 22, cy); c.lineTo(cx - 8, cy); c.moveTo(cx + 8, cy); c.lineTo(cx + 22, cy); c.moveTo(cx, cy - 22); c.lineTo(cx, cy - 8); c.moveTo(cx, cy + 8); c.lineTo(cx, cy + 22); c.stroke();
-  const g2 = c.createLinearGradient(0, h - 70, 0, h); g2.addColorStop(0, 'rgba(0,0,0,0)'); g2.addColorStop(1, 'rgba(0,0,0,.6)'); c.fillStyle = g2; c.fillRect(0, h - 70, w, 70);
-  c.fillStyle = '#fff'; c.font = '700 26px JetBrains Mono, monospace';
+  c.font = '600 23px Barlow Condensed, sans-serif'; const tw = Math.min(300, c.measureText(st).width + 30);
+  c.fillStyle = sc === 'crit' ? 'rgba(255,82,87,.9)' : sc === 'warn' ? 'rgba(245,165,36,.9)' : 'rgba(40,168,92,.9)'; c.beginPath(); c.roundRect(52, 14, tw, 36, 6); c.fill();
+  c.fillStyle = '#fff'; c.fillText(st.slice(0, 30), 67, 33);
+  c.textAlign = 'right'; c.font = '700 23px JetBrains Mono, monospace';
+  let x = w - 22; c.fillText(`${Math.ceil(D.battery)}%`, x, 33); x -= 82;
+  c.strokeStyle = '#fff'; c.lineWidth = 2.5; c.strokeRect(x - 2, 22, 34, 20); c.fillRect(x + 32, 28, 3, 8); c.fillStyle = D.battery < 25 ? '#ff5257' : '#fff'; c.fillRect(x + 1, 25, 28 * D.battery / 100, 14); x -= 22;
+  c.fillStyle = '#fff'; for (let i = 0; i < 4; i++) c.fillRect(x - 30 + i * 8, 40 - i * 5, 5, 6 + i * 5); x -= 50;
+  c.fillText(`${D.sats}`, x, 33); x -= 50; c.font = '800 25px Barlow Condensed, sans-serif'; c.fillText(D.mode, x, 33);
+  if (D.rec) { c.textAlign = 'center'; c.fillStyle = '#ff5257'; c.font = '700 23px JetBrains Mono, monospace'; c.fillText('● ' + fmtT(D.recT), w / 2, 33); }
+  // left rail: takeoff and RTH; right rail: photo/video, shutter, playback
+  c.textAlign = 'center'; c.lineWidth = 3;
+  for (const [y, k] of [[172, 'to'], [244, 'h']]) { c.fillStyle = 'rgba(0,0,0,.35)'; c.beginPath(); c.arc(46, y, 24, 0, 7); c.fill(); c.strokeStyle = 'rgba(255,255,255,.85)'; c.stroke(); c.fillStyle = '#fff'; c.font = '700 22px Barlow Condensed, sans-serif'; c.fillText(k === 'h' ? 'H' : D.airborne ? '↓' : '↑', 46, y + 1); }
+  c.fillStyle = 'rgba(0,0,0,.3)'; c.beginPath(); c.arc(w - 58, h / 2 - 82, 20, 0, 7); c.fill(); c.fillStyle = '#fff'; c.font = '600 18px Barlow Condensed, sans-serif'; c.fillText(D.video ? 'VID' : 'PHO', w - 58, h / 2 - 81);
+  c.beginPath(); c.arc(w - 58, h / 2, 30, 0, 7); c.strokeStyle = '#fff'; c.lineWidth = 4; c.stroke(); c.fillStyle = D.video ? '#ff5257' : '#fff'; c.beginPath();
+  if (D.rec) c.roundRect(w - 70, h / 2 - 12, 24, 24, 4); else c.arc(w - 58, h / 2, 22, 0, 7); c.fill();
+  c.strokeStyle = 'rgba(255,255,255,.85)'; c.lineWidth = 3; c.strokeRect(w - 70, h / 2 + 70, 24, 18);
+  c.fillStyle = 'rgba(255,255,255,.88)'; c.font = '600 19px JetBrains Mono, monospace'; c.fillText(`${D.zoom}x`, w - 58, h / 2 + 46);
+  // bottom: mini map with home and aircraft, telemetry
+  const g2 = c.createLinearGradient(0, h - 90, 0, h); g2.addColorStop(0, 'rgba(0,0,0,0)'); g2.addColorStop(1, 'rgba(0,0,0,.62)'); c.fillStyle = g2; c.fillRect(0, h - 90, w, 90);
+  const mx = 92, my = h - 92, mr = 64, hx = D.home.x - D.pos.x, hz = D.home.z - D.pos.z, sc2 = mr / Math.max(40, Math.hypot(hx, hz) * 1.3);
+  c.fillStyle = 'rgba(20,30,24,.78)'; c.beginPath(); c.arc(mx, my, mr, 0, 7); c.fill(); c.strokeStyle = 'rgba(255,255,255,.5)'; c.lineWidth = 2; c.stroke();
+  c.fillStyle = '#f5a524'; c.font = '700 18px Barlow Condensed, sans-serif'; c.fillText('H', mx + hx * sc2, my + hz * sc2);
+  c.save(); c.translate(mx, my); c.rotate(D.yaw); c.fillStyle = '#fff'; c.beginPath(); c.moveTo(0, -13); c.lineTo(9, 9); c.lineTo(0, 4); c.lineTo(-9, 9); c.closePath(); c.fill(); c.restore();
+  c.textAlign = 'left'; c.fillStyle = '#fff'; c.font = '700 24px JetBrains Mono, monospace';
   const hh = D.pos.y - D.home.y, dd = Math.hypot(D.pos.x - D.home.x, D.pos.z - D.home.z);
-  c.fillText(`H ${U.d(hh).toFixed(1)}${U.ud()}   D ${U.d(dd).toFixed(0)}${U.ud()}   H.S ${U.s(Math.hypot(D.vel.x, D.vel.z)).toFixed(1)}   V.S ${U.s(D.vel.y).toFixed(1)}`, 22, h - 26);
-  c.beginPath(); c.arc(w - 50, h / 2, 26, 0, 7); c.strokeStyle = '#fff'; c.lineWidth = 4; c.stroke(); c.fillStyle = D.video ? '#ff5257' : '#fff'; c.beginPath(); c.arc(w - 50, h / 2, 19, 0, 7); c.fill();
-  c.fillStyle = 'rgba(255,255,255,.85)'; c.font = '600 20px JetBrains Mono, monospace'; c.fillText(`${Math.round(D.gimbal)}°`, 22, h / 2);
+  c.fillText(`H ${U.d(hh).toFixed(1)}${U.ud()}  D ${U.d(dd).toFixed(0)}${U.ud()}  H.S ${U.s(Math.hypot(D.vel.x, D.vel.z)).toFixed(1)}  V.S ${U.s(D.vel.y).toFixed(1)}`, 176, h - 30);
+  c.fillStyle = 'rgba(255,255,255,.85)'; c.font = '600 19px JetBrains Mono, monospace'; c.fillText(`${Math.round(D.gimbal)}°`, 84, h / 2 - 20);
   RC.uiTex.needsUpdate = true;
 }
 /* labels: HTML chips projected onto the 3D model */
@@ -1948,7 +2145,7 @@ function placeLabels(w, h) {
 }
 /* pointer: drag the sticks, click buttons, flip the switch, roll the dial */
 {
-  const wrap = $('#rcWrap'), ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), plane = new THREE.Plane(new V3(0, 1, 0), -(8 + 20)), hp = new V3();
+  const wrap = $('#rcWrap'), ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), plane = new THREE.Plane(new V3(0, 1, 0), -(8 + 15)), hp = new V3();
   let drag = null;
   const pick = e => { const r = wrap.getBoundingClientRect(); ndc.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(ndc, rcCam); return ray.intersectObjects(RC.hits, false)[0]; };
   const setStick = (s, e) => { const r = wrap.getBoundingClientRect(); ndc.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(ndc, rcCam); if (!ray.ray.intersectPlane(plane, hp)) return; const c = RC.well[s]; PTR[s].x = clamp((hp.x - c.x) / 13, -1, 1); PTR[s].y = clamp(-(hp.z - c.z) / 13, -1, 1); };
@@ -2540,17 +2737,20 @@ function update(dt, t) {
   updateCourse(t, !APP.paused && !!L.cur && !D.crashed);
 }
 function draw(dt, t) {
-  updateDroneVisual(dt, t);
+  updateDroneVisual(dt, t); updatePilot(dt, t);
   const W = innerWidth, H = innerHeight;
-  updateCameras(dt, W / H); cam.updateProjectionMatrix();
+  updateCameras(dt, W / H);
+  const rcWrapEl = $('#rcWrap'), rcOn = APP.started && !rcWrapEl.hidden;
+  // with the remote docked at the bottom, shift the view so the drone sits in the open sky above it, not behind the phone
+  if (rcOn && VIEW.mode !== 'fpv' && !VIEW.dbg) cam.setViewOffset(W, H, 0, Math.min(rcWrapEl.offsetHeight * 0.42, H * 0.2), W, H); else cam.clearViewOffset();
+  cam.updateProjectionMatrix();
   sun.target.position.copy(D.pos); sun.position.copy(D.pos).addScaledVector(SUN_DIR, 250);
   waterNormal.offset.set(t * 0.004, t * 0.0025);
   renderer.shadowMap.needsUpdate = true;
   if (APP.photoReq) { APP.photoReq = false; capturePhoto(W, H); }
-  const rcWrapEl = $('#rcWrap'), rcOn = APP.started && !rcWrapEl.hidden;
   if (rcOn) { // live camera feed for the phone on the remote
-    fpvCam.aspect = 16 / 9; fpvCam.fov = fpvFov(16 / 9); fpvCam.updateProjectionMatrix(); sky.position.copy(fpvCam.position);
-    renderer.setRenderTarget(rcRT); renderer.render(scene, fpvCam); renderer.setRenderTarget(null);
+    fpvCam.aspect = RC_ASPECT; fpvCam.fov = fpvFov(RC_ASPECT); fpvCam.updateProjectionMatrix(); sky.position.copy(fpvCam.position);
+    PIL.screen.visible = false; renderer.setRenderTarget(rcRT); renderer.render(scene, fpvCam); renderer.setRenderTarget(null); PIL.screen.visible = true;
   }
   sky.position.copy(cam.position);
   renderer.setScissorTest(false); renderer.setViewport(0, 0, W, H); renderer.render(scene, cam);
@@ -2572,7 +2772,7 @@ function draw(dt, t) {
   if (APP.panel === 'controls') updateAxesLive();
   if (!$('#menu').hidden && ((frame.n = (frame.n || 0) + 1) % 60 === 0)) inputStatus();
 }
-if (/debug/.test(location.search)) window.__T = { tick, update, cam, scene, THREE, D, keys, L, S, VIEW, startLesson, startFree, INP: () => INP, STK, COURSE };
+if (/debug/.test(location.search)) window.__T = { tick, update, cam, scene, THREE, D, keys, L, S, VIEW, startLesson, startFree, INP: () => INP, STK, COURSE, renderer, drone, gimbal, pilot, PILOT, RC, rcScene, rcCam, frameRC, setView, sky, APP };
 
 /* ---------- boot ---------- */
 buildRC(); resetDrone(); setView('chase', true); applyQuality(); refreshMenu();

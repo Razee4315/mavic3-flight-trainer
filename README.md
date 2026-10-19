@@ -16,8 +16,10 @@ Unofficial training project. Not affiliated with or endorsed by DJI.
 - **Obstacle sensing.** Braking and radar arcs work in Normal and Cine. Sensing is off in Sport mode, and thin power lines can't be detected (just like on the real drone).
 - **Return to Home.** RTH climbs to the RTH altitude, flies home and lands. Smart low-battery RTH is included, plus a forced landing at critical battery.
 - **Gimbal and camera.** The gimbal tilts from −90° to +35°, the Fn button recentres it, and you get 1x, 3x, 7x and 28x zoom, photos and video.
-- **A 3D RC-N1 remote.** The sticks tilt, the C/N/S switch slides, the gimbal dial rolls and the buttons press. The phone in the holder shows the live camera feed.
-- **Three views.** Chase, Camera (what DJI Fly shows), and Pilot (line of sight from where you stand).
+- **A 3D RC-N1 remote.** Two-part shell, recessed stick wells with grippy caps, a centre-column phone clamp and a DJI Fly-style screen. The sticks tilt, the C/N/S switch slides, the gimbal dial rolls and the buttons press. The phone shows the live camera feed.
+- **A detailed Mavic 3.** Gloss-black visor with the forward vision sensors, sensors on every side, a stabilised gimbal with the main and tele lenses, folding-style arms and landing legs.
+- **You, on the field.** The pilot stands by the home pad holding the remote, and their head and shoulders follow the drone.
+- **Three views.** Chase (pulls back as you speed up and stays out of buildings), Camera (what DJI Fly shows), and Pilot (line of sight from where you stand, zooming in a little when the drone is far). The view keeps the drone above the docked remote.
 
 ## Lessons
 
