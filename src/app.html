@@ -1,6 +1,8 @@
 <title>Mavic 3 Flight Trainer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<link rel="canonical" href="https://razee4315.github.io/mavic3-flight-trainer/app/">
 <meta name="description" content="3D flight trainer for the DJI Mavic 3 and RC-N1 remote: real stick modes, flight modes, GPS braking, obstacle sensing, RTH and guided lessons.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"%3E%3Cdefs%3E%3ClinearGradient id="bg" x1="0" y1="0" x2="1" y2="1"%3E%3Cstop offset="0" stop-color="#1d262e"/%3E%3Cstop offset="1" stop-color="#0a0e12"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="64" height="64" rx="15" fill="url%28#bg%29"/%3E%3Crect x=".5" y=".5" width="63" height="63" rx="14.5" fill="none" stroke="#ffffff" stroke-opacity=".1"/%3E%3Cpath d="M19.5 19.5L44.5 44.5M44.5 19.5L19.5 44.5" stroke="#d9e0e5" stroke-width="3.4" stroke-linecap="round"/%3E%3Cg fill="none" stroke="#f5a524" stroke-linecap="round"%3E%3Cg stroke-opacity=".28" stroke-width="2"%3E%3Ccircle cx="18" cy="18" r="8"/%3E%3Ccircle cx="46" cy="18" r="8"/%3E%3Ccircle cx="18" cy="46" r="8"/%3E%3Ccircle cx="46" cy="46" r="8"/%3E%3C/g%3E%3Cg stroke-width="2.6"%3E%3Cpath d="M10.6 15A8 8 0 0 1 21 10.6"/%3E%3Cpath d="M43 10.6A8 8 0 0 1 53.4 15"/%3E%3Cpath d="M10.6 49A8 8 0 0 0 21 53.4"/%3E%3Cpath d="M43 53.4A8 8 0 0 0 53.4 49"/%3E%3C/g%3E%3C/g%3E%3Cg fill="#d9e0e5"%3E%3Ccircle cx="18" cy="18" r="2.6"/%3E%3Ccircle cx="46" cy="18" r="2.6"/%3E%3Ccircle cx="18" cy="46" r="2.6"/%3E%3Ccircle cx="46" cy="46" r="2.6"/%3E%3C/g%3E%3Crect x="25.5" y="22.5" width="13" height="19" rx="5.5" fill="#eef2f4"/%3E%3Ccircle cx="32" cy="27.5" r="2.6" fill="#0a0e12"/%3E%3Ccircle cx="32" cy="27.5" r="1" fill="#f5a524"/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -127,23 +129,23 @@ b{font-weight:600;color:#fff}
 #touchL{left:calc(var(--sl) + 4px)} #touchR{right:calc(var(--sr) + 4px)}
 
 /* ---------- lesson panel ---------- */
-#lesson{position:absolute;left:var(--sl);top:calc(60px + var(--st));width:340px;max-height:calc(50vh - 110px);overflow:auto;border-radius:12px;padding:12px 14px 12px;touch-action:pan-y}
-#lesson .lh{display:flex;align-items:center;gap:6px}
-#lesson .lh span{font:700 11px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--amber);flex:1}
-.mini{font:600 11px var(--f-display);letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:6px;border:1px solid var(--line);color:var(--ink-2)}
-.mini:hover{color:#fff;background:rgba(255,255,255,.08)}
-#lesson h2{margin:4px 0 8px;font:700 21px/1.1 var(--f-display);letter-spacing:.01em;text-wrap:balance}
-#lSteps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px}
-#lSteps li{display:grid;grid-template-columns:18px 1fr;gap:6px;font-size:13px;color:var(--ink-3)}
-#lSteps li::before{content:"";width:12px;height:12px;margin-top:3px;border-radius:50%;border:1.5px solid currentColor}
-#lSteps li.done{color:var(--ink-2)}
-#lSteps li.done::before{background:var(--green);border-color:var(--green)}
-#lSteps li.cur{color:var(--ink)}
-#lSteps li.cur::before{border-color:var(--amber);box-shadow:0 0 0 3px rgba(245,165,36,.25)}
-#lSteps li .tx{display:block;margin-top:3px;font-size:13.5px;line-height:1.45;color:var(--ink-2)}
-#lSteps li .tt{font-weight:600}
-#lProg{margin-top:8px;font:600 13px var(--f-mono);color:var(--cyan);min-height:18px}
+#lesson{position:absolute;left:var(--sl);top:calc(60px + var(--st));width:310px;max-height:calc(50vh - 90px);overflow:auto;border-radius:12px;padding:12px 14px 14px;touch-action:pan-y}
+#lesson .lh{display:flex;align-items:center;gap:2px}
+#lesson .lh span{font:700 11px var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--amber);flex:1}
+.mini{width:26px;height:26px;border-radius:6px;display:grid;place-items:center;color:var(--ink-2)}
+.mini svg{width:15px;height:15px}
+.mini:hover{color:#fff;background:rgba(255,255,255,.1)}
+#lesson h2{margin:2px 0 10px;font:700 20px/1.1 var(--f-display);letter-spacing:.01em;text-wrap:balance}
+#lDots{display:flex;gap:3px;margin-bottom:12px}
+#lDots i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.14)}
+#lDots i.done{background:var(--green)}
+#lDots i.cur{background:var(--amber)}
+#lStep small{display:block;font:600 11px var(--f-mono);color:var(--ink-3);margin-bottom:3px}
+#lStep .stt{font:600 15px/1.25 var(--f-body);color:#fff}
+#lStep p{margin:4px 0 0;font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+#lProg{margin-top:8px;font:600 13px var(--f-mono);color:var(--cyan)}
 #lWarn{margin-top:4px;font:600 13px var(--f-display);color:var(--amber);letter-spacing:.02em}
+#lProg:empty,#lWarn:empty{display:none}
 
 /* ---------- pip, toasts, misc ---------- */
 #pipFrame{position:absolute;right:var(--sr);top:calc(60px + var(--st));width:min(300px,26vw);aspect-ratio:16/9;border-radius:8px;border:1px solid rgba(255,255,255,.35);box-shadow:0 8px 24px rgba(0,0,0,.4);pointer-events:none;max-width:100%}
@@ -160,40 +162,61 @@ b{font-weight:600;color:#fff}
 
 /* ---------- overlays ---------- */
 .overlay{position:absolute;inset:0;display:grid;place-items:center;padding:calc(16px + var(--st)) var(--sr) calc(16px + var(--sb)) var(--sl);background:radial-gradient(120% 90% at 30% 20%,rgba(6,10,14,.55),rgba(4,6,9,.88))}
+#panel,#modal{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .scroll{overflow:auto;touch-action:pan-y;-webkit-overflow-scrolling:touch}
-#menu{align-items:stretch;overflow:auto;touch-action:pan-y}
-.menu-grid{width:min(1200px,100%);margin:auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:36px;align-items:start;padding-block:12px}
+/* while the menu is up, the flight HUD steps out of the way so the start screen stays clean */
+#app.menu-open :is(#topbar,.rail,#gimbalScale,#nav,#lesson,#rcWrap,#rcShow,#photoCount,#rec,#toasts,.tstick,#pipFrame){visibility:hidden}
+#menu{place-items:stretch;overflow:auto;touch-action:pan-y;padding:calc(28px + var(--st)) calc(var(--sr) + 12px) calc(24px + var(--sb)) calc(var(--sl) + 12px);
+  background:linear-gradient(90deg,rgba(5,8,11,.92) 0%,rgba(5,8,11,.74) 24%,rgba(5,8,11,.08) 44%,rgba(5,8,11,.08) 58%,rgba(5,8,11,.74) 74%,rgba(5,8,11,.92) 100%)}
+.menu-grid{width:min(1320px,100%);margin:0 auto;min-height:100%;display:grid;grid-template-columns:minmax(300px,400px) minmax(0,1fr) minmax(320px,390px);gap:32px}
+.brand{grid-column:1;display:flex;flex-direction:column;justify-content:space-between;gap:36px}
+.mark{display:flex;align-items:center;gap:12px;font:600 12px/1.2 var(--f-display);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2)}
+.mark svg{width:42px;height:42px;flex:none;filter:drop-shadow(0 6px 14px rgba(0,0,0,.45))}
 .eyebrow{margin:0 0 6px;font:700 12px var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
-.brand h1{margin:0;font:800 clamp(56px,8vw,104px)/.86 var(--f-display);letter-spacing:-.01em;text-transform:uppercase}
-.brand h1 span{display:block;font-weight:600;font-size:.42em;letter-spacing:.14em;color:var(--ink-2);margin-top:12px}
-.lede{max-width:52ch;font-size:16px;line-height:1.55;color:var(--ink-2);margin:18px 0 22px}
-.block{border-top:1px solid var(--line);padding-top:16px;margin-top:4px}
-.block h3{margin:0 0 10px;font:700 13px var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.brand h1{margin:0;font:800 clamp(58px,6.6vw,96px)/.86 var(--f-display);letter-spacing:-.01em;text-transform:uppercase}
+.brand h1 span{display:block;font-weight:600;font-size:.34em;letter-spacing:.22em;color:var(--amber);margin-top:14px}
+.lede{max-width:32ch;font-size:16px;line-height:1.5;color:var(--ink-2);margin:20px 0 0}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.btn.lg{padding:13px 22px;font-size:17px;border-radius:10px}
+.smode{display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;margin-top:28px}
+.smode>span{font:700 11px var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
 .seg{display:inline-flex;padding:3px;border-radius:9px;background:rgba(255,255,255,.06);border:1px solid var(--line);gap:2px}
-.seg button{padding:7px 14px;border-radius:7px;font:600 14px var(--f-display);letter-spacing:.04em;color:var(--ink-2)}
+.seg button{padding:6px 12px;border-radius:7px;font:600 13px var(--f-display);letter-spacing:.04em;color:var(--ink-2)}
 .seg button.on{background:var(--ink);color:#0b0f13}
-#modeDiagram{margin-top:12px;display:flex;gap:14px;flex-wrap:wrap}
-.mstick{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid var(--line);min-width:0}
-.mstick svg{width:64px;height:64px;flex:none}
-.mstick p{margin:0;font-size:13px;line-height:1.4;color:var(--ink-2)}
-.mstick p b{display:block;font:700 12px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:2px}
+#modeDiagram{flex-basis:100%;display:flex;gap:18px;font-size:13px;color:var(--ink-2)}
+#modeDiagram i{display:inline-grid;place-items:center;width:18px;height:18px;margin-right:7px;border-radius:5px;border:1px solid var(--line);font:700 10px/1 var(--f-mono);font-style:normal;color:var(--amber)}
+.links{display:flex;flex-wrap:wrap;gap:6px 20px}
+.links button{font:600 13px var(--f-display);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);padding:4px 0;border-bottom:1px solid transparent}
+.links button:hover{color:#fff;border-color:var(--amber)}
+.foot{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.foot p{margin:0;font-size:12px;line-height:1.45;color:var(--ink-3)}
+#inputStatus{display:flex;gap:16px}
+#inputStatus span{display:inline-flex;align-items:center;gap:6px}
+#inputStatus i{width:7px;height:7px;border-radius:50%;background:var(--ink-3)}
+#inputStatus i.on{background:var(--green);box-shadow:0 0 6px var(--green)}
 .note{font-size:13px;color:var(--ink-3);margin:10px 0 0;max-width:60ch}
 .row-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
 .btn{padding:10px 16px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.05);font:600 15px var(--f-display);letter-spacing:.04em}
 .btn:hover{background:rgba(255,255,255,.1)}
 .btn.primary{background:var(--amber);border-color:var(--amber);color:#1a1205}
 .btn.primary:hover{background:#ffb944}
-.lessons h2{margin:0 0 4px;font:700 26px var(--f-display);letter-spacing:.01em}
-.lessons h2 small{display:block;font:500 14px var(--f-body);color:var(--ink-3);margin-top:2px}
-#lessonList{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
-#lessonList button{width:100%;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;text-align:left;padding:10px 14px 10px 10px;border-radius:10px;background:rgba(255,255,255,.035);border:1px solid var(--line)}
-#lessonList button:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.25)}
-#lessonList .n{font:700 22px/1 var(--f-mono);color:var(--ink-3);text-align:center}
-#lessonList .t{font:700 17px/1.15 var(--f-display);letter-spacing:.01em;display:block}
-#lessonList .s{font-size:13px;color:var(--ink-2);display:block;margin-top:2px}
-#lessonList .ok{font:600 12px var(--f-mono);color:var(--green);white-space:nowrap}
+.lessons{grid-column:3;align-self:center;max-height:100%;overflow:auto;border-radius:16px;padding:20px 14px 12px;background:rgba(10,14,18,.74);border:1px solid var(--line);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.lessons header{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:0 8px}
+.lessons h2{margin:0;font:700 22px var(--f-display);letter-spacing:.01em}
+#courseCount{font:600 12px var(--f-mono);color:var(--ink-2)}
+.cbar{height:3px;border-radius:2px;background:rgba(255,255,255,.1);margin:12px 8px 4px;overflow:hidden}
+.cbar i{display:block;height:100%;width:0;background:var(--amber);transition:width .4s}
+#lessonList h4{margin:14px 10px 4px;font:700 11px var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+#lessonList ol{list-style:none;margin:0;padding:0}
+#lessonList button{width:100%;display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:center;text-align:left;padding:8px 10px;border-radius:8px}
+#lessonList button:hover{background:rgba(255,255,255,.07)}
+#lessonList .n{font:600 12px/1 var(--f-mono);color:var(--ink-3)}
+#lessonList .t{font:500 14.5px/1.25 var(--f-body)}
+#lessonList .ok{font:600 11px var(--f-mono);color:var(--green);white-space:nowrap}
 #lessonList li.done .n{color:var(--green)}
-#btnResume{margin-right:8px}
+#lessonList li.next button{background:rgba(245,165,36,.1);box-shadow:inset 2px 0 0 var(--amber)}
+#lessonList li.next .n{color:var(--amber)}
+#lessonList li.next .ok{color:var(--amber)}
 
 .card{width:min(520px,100%);border-radius:14px;padding:22px 24px;background:var(--panel-2);border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.5)}
 .card h2{margin:0 0 8px;font:700 30px/1.05 var(--f-display);text-wrap:balance}
@@ -237,9 +260,19 @@ input[type=range]{accent-color:var(--amber)}
 .gallery img{width:100%;border-radius:8px;display:block;border:1px solid var(--line);cursor:zoom-in}
 .big img{width:100%;border-radius:10px}
 
-@media (max-width:1100px){#rcWrap{width:min(480px,50vw)} #tele b{font-size:15px;min-width:44px} #navmap{width:118px;height:118px}}
+@media (max-width:1100px){
+  #rcWrap{width:min(480px,50vw)} #tele b{font-size:15px;min-width:44px} #navmap{width:118px;height:118px}
+  .menu-grid{grid-template-columns:minmax(0,1fr) minmax(300px,370px)}
+  .lessons{grid-column:2}
+  #menu{background:linear-gradient(90deg,rgba(5,8,11,.92),rgba(5,8,11,.5) 55%,rgba(5,8,11,.85))}
+}
+@media (max-width:760px){
+  .menu-grid{grid-template-columns:minmax(0,1fr);min-height:0;gap:28px}
+  .lessons{grid-column:1;max-height:none;overflow:visible}
+  .brand{gap:28px}
+  #menu{background:rgba(5,8,11,.84)}
+}
 @media (max-width:860px){
-  .menu-grid{grid-template-columns:minmax(0,1fr);gap:22px}
   #indRc,#indTime small{display:none}
   #lesson{width:min(300px,calc(100vw - 32px))}
   #pipFrame{width:min(200px,34vw)}
@@ -256,6 +289,7 @@ input[type=range]{accent-color:var(--amber)}
   #tele b{font-size:14px}
   #lesson{top:calc(52px + var(--st));max-height:34vh;padding:9px 11px}
   #lesson h2{font-size:18px}
+  .brand h1{font-size:54px}
   .rail{top:calc(40% + 10px)}
   .rb{width:42px;height:42px}
   #btnShutter{width:58px;height:58px}#btnShutter i{width:44px;height:44px}
@@ -265,7 +299,18 @@ input[type=range]{accent-color:var(--amber)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
-<div id="app">
+<div id="app" class="menu-open">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <linearGradient id="logoBg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1d262e"/><stop offset="1" stop-color="#0a0e12"/></linearGradient>
+    <symbol id="logo" viewBox="0 0 64 64">
+      <rect width="64" height="64" rx="15" fill="url(#logoBg)"/>
+      <rect x=".5" y=".5" width="63" height="63" rx="14.5" fill="none" stroke="#fff" stroke-opacity=".12"/>
+      <path d="M19.5 19.5L44.5 44.5M44.5 19.5L19.5 44.5" stroke="#d9e0e5" stroke-width="3.4" stroke-linecap="round"/>
+      <g fill="none" stroke="#f5a524" stroke-linecap="round"><g stroke-opacity=".28" stroke-width="2"><circle cx="18" cy="18" r="8"/><circle cx="46" cy="18" r="8"/><circle cx="18" cy="46" r="8"/><circle cx="46" cy="46" r="8"/></g><g stroke-width="2.6"><path d="M10.6 15A8 8 0 0 1 21 10.6"/><path d="M43 10.6A8 8 0 0 1 53.4 15"/><path d="M10.6 49A8 8 0 0 0 21 53.4"/><path d="M43 53.4A8 8 0 0 0 53.4 49"/></g></g>
+      <g fill="#d9e0e5"><circle cx="18" cy="18" r="2.6"/><circle cx="46" cy="18" r="2.6"/><circle cx="18" cy="46" r="2.6"/><circle cx="46" cy="46" r="2.6"/></g>
+      <rect x="25.5" y="22.5" width="13" height="19" rx="5.5" fill="#eef2f4"/><circle cx="32" cy="27.5" r="2.6" fill="#0a0e12"/><circle cx="32" cy="27.5" r="1" fill="#f5a524"/>
+    </symbol>
+  </defs></svg>
   <canvas id="gl"></canvas>
   <canvas id="ov"></canvas>
   <div id="pipFrame" hidden><span>CAMERA</span></div>
@@ -307,9 +352,10 @@ input[type=range]{accent-color:var(--amber)}
   </section>
 
   <section id="lesson" class="glass" hidden>
-    <div class="lh"><span id="lNum">Lesson</span><button id="lRestart" class="mini">Restart</button><button id="lExit" class="mini">Exit</button></div>
+    <div class="lh"><span id="lNum">Lesson</span><button id="lRestart" class="mini" aria-label="Restart lesson" title="Restart (R)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v5h5"/></svg></button><button id="lExit" class="mini" aria-label="Exit lesson" title="Exit lesson"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <h2 id="lTitle"></h2>
-    <ol id="lSteps"></ol>
+    <div id="lDots"></div>
+    <div id="lStep"></div>
     <div id="lProg"></div>
     <div id="lWarn"></div>
   </section>
@@ -327,29 +373,39 @@ input[type=range]{accent-color:var(--amber)}
   <div id="menu" class="overlay">
     <div class="menu-grid">
       <section class="brand">
-        <p class="eyebrow">Unofficial training simulator · RC-N1 remote</p>
-        <h1>Mavic 3<span>Flight Trainer</span></h1>
-        <p class="lede">Learn the remote before you touch the real aircraft. The trainer uses the Mavic 3's published flight-mode speeds and copies how it actually flies: GPS position hold and braking, obstacle sensing, the combination stick command, Return to Home and ATTI drift in wind.</p>
-        <div class="block">
-          <h3>Your stick mode</h3>
-          <div class="seg" id="modeSeg" role="group" aria-label="Stick mode"><button data-m="1">Mode 1</button><button data-m="2">Mode 2 · default</button><button data-m="3">Mode 3</button></div>
-          <div id="modeDiagram"></div>
-          <p class="note">DJI remotes ship in Mode 2. Use the same mode here that the real remote is set to in DJI Fly (Settings → Control → Stick Mode).</p>
+        <div class="mark"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#logo"/></svg>DJI RC-N1<br>Training simulator</div>
+        <div>
+          <h1>Mavic 3<span>Flight Trainer</span></h1>
+          <p class="lede">Learn the sticks, switches and buttons before your first real flight.</p>
+          <div class="cta">
+            <button id="btnResume" class="btn lg primary" hidden>Resume</button>
+            <button id="btnStart" class="btn lg primary">Start lesson 1</button>
+            <button id="btnFree" class="btn lg">Free flight</button>
+          </div>
+          <div class="smode">
+            <span>Stick mode</span>
+            <div class="seg" id="modeSeg" role="group" aria-label="Stick mode"><button data-m="1">Mode 1</button><button data-m="2" title="DJI default">Mode 2</button><button data-m="3">Mode 3</button></div>
+            <div id="modeDiagram"></div>
+          </div>
         </div>
-        <div class="row-btns">
-          <button id="btnResume" class="btn primary" hidden>Resume flight</button>
-          <button id="btnFree" class="btn">Free flight</button>
-          <button class="btn" data-panel="controls">Controls</button>
-          <button class="btn" data-panel="settings">Settings</button>
-          <button class="btn" data-panel="guide">Field guide</button>
-          <button class="btn" data-panel="photos">Photos</button>
+        <div>
+          <nav class="links" aria-label="More">
+            <button data-panel="controls">Controls</button>
+            <button data-panel="settings">Settings</button>
+            <button data-panel="guide">Field guide</button>
+            <button data-panel="photos">Photos</button>
+            <button data-panel="about">About</button>
+          </nav>
+          <div class="foot">
+            <p id="inputStatus"></p>
+            <p>Final Year Project. Unofficial, not affiliated with DJI.</p>
+          </div>
         </div>
-        <p id="inputStatus" class="note"></p>
-        <p class="note">Not affiliated with or endorsed by DJI. Practise here, then follow the official manual and your local aviation rules for real flights.</p>
       </section>
-      <section class="lessons">
-        <h2>Training course<small>Do the lessons in order. Each one builds on the last.</small></h2>
-        <ol id="lessonList"></ol>
+      <section class="lessons" aria-label="Training course">
+        <header><h2>Training course</h2><span id="courseCount"></span></header>
+        <div class="cbar"><i id="courseBar"></i></div>
+        <div id="lessonList"></div>
       </section>
     </div>
   </div>
@@ -1413,8 +1469,8 @@ function scanRadar() {
 function startAuto(type) {
   if (D.crashed) return;
   if (type === 'takeoff') { if (D.airborne) return; if (D.locked) { toast('Motors are locked in this lesson', 'warn'); return; } D.auto = { type, t: 0 }; if (!D.motors) startMotors(); say('Taking off'); toast('Auto takeoff', 'ok'); }
-  else if (type === 'land') { if (!D.airborne) return; D.auto = { type, t: 0 }; say('Landing'); toast('Auto landing — press Pause to cancel'); }
-  else if (type === 'rth') { if (!D.airborne) { toast('Already on the ground'); return; } D.auto = { type, t: 0, phase: 'init' }; say('Returning to home'); toast('Return to Home started — press Pause to cancel', 'warn'); }
+  else if (type === 'land') { if (!D.airborne) return; D.auto = { type, t: 0 }; say('Landing'); toast('Auto landing · Pause to cancel'); }
+  else if (type === 'rth') { if (!D.airborne) { toast('Already on the ground'); return; } D.auto = { type, t: 0, phase: 'init' }; say('Returning to home'); toast('Returning home · Pause to cancel', 'warn'); }
   else if (type === 'force') { D.auto = { type, t: 0 }; say('Battery critically low. Landing'); toast('Critical battery — forced landing', 'crit'); }
 }
 function endAuto(msg) { if (!D.auto) return; const t = D.auto.type; D.auto = null; D.hold = null; D.altHold = null; if (msg) toast(msg); if (L.cur) L.st.autoEnded = t; }
@@ -1439,7 +1495,7 @@ function autoUpdate(h, inp) {
       const sp = Math.min(12, dist * 0.55); A.vd = { x: dx / dist * sp, z: dz / dist * sp };
       A.yawTo = Math.atan2(dx, -dz); A.vy = clamp((A.alt - D.pos.y) * 1.5, -2, 4);
       if (rayDist(D.pos.x, D.pos.y, D.pos.z, dx / dist, 0, dz / dist, 14) < 14) { A.alt += h * 3; A.vy = 3; }
-      if (dist < 1.2) { A.phase = 'land'; toast('Above home point — landing'); }
+      if (dist < 1.2) { A.phase = 'land'; toast('Landing at home'); }
     }
     if (A.phase === 'land') { A.vd = { x: dx * 0.8, z: dz * 0.8 }; A.vy = -3; }
   }
@@ -1573,7 +1629,7 @@ function updateBattery(dt) {
   const dist = Math.hypot(D.pos.x - D.home.x, D.pos.z - D.home.z), hh = D.pos.y - D.home.y;
   const need = 15 + (dist / 10 + Math.max(0, S.rthAlt - hh) / 5 + (Math.max(hh, S.rthAlt) + 10) / 3 + 20) * hover * 1.4;
   if (D.battery <= 10 && (!D.auto || D.auto.type !== 'force')) startAuto('force');
-  else if (D.battery <= need && D.lowBatPrompt === 0 && D.battery > 10 && (!D.auto || D.auto.type !== 'rth')) { D.lowBatPrompt = 1; D.lowBatT = 10; say('Low battery. Returning home'); toast('Low battery: returning home in 10 s. Press Pause to cancel', 'crit'); }
+  else if (D.battery <= need && D.lowBatPrompt === 0 && D.battery > 10 && (!D.auto || D.auto.type !== 'rth')) { D.lowBatPrompt = 1; D.lowBatT = 10; say('Low battery. Returning home'); toast('Low battery · returning home in 10 s', 'crit'); }
   if (D.battery <= 0 && D.airborne) { D.motors = false; }
 }
 
@@ -1640,19 +1696,19 @@ function toast(msg, cls = '', ms = 2600) {
 }
 
 /* ---------- controls ---------- */
-function setMode(m) { if (D.mode === m) return; D.mode = m; toast(`${MODES[m].name} mode${m === 'S' ? ' — obstacle sensing off' : m === 'C' ? ' — slow and smooth' : ''}`, m === 'S' ? 'warn' : ''); sfx.beep(m === 'S' ? 1200 : 900); }
+function setMode(m) { if (D.mode === m) return; D.mode = m; toast(`${MODES[m].name} mode${m === 'S' ? ' · sensing off' : ''}`, m === 'S' ? 'warn' : ''); sfx.beep(m === 'S' ? 1200 : 900); }
 function togglePV() { rcPress('rcPV'); if (D.rec) stopRec(); D.video = !D.video; toast(D.video ? 'Video mode' : 'Photo mode'); }
 function startRec() { D.rec = true; D.recT = 0; sfx.beep(1000); }
 function stopRec() { D.rec = false; sfx.beep(700); toast(`Clip saved (${fmtT(D.recT)})`, 'ok'); }
 function shutter() { rcPress('rcShutter'); if (D.video) { D.rec ? stopRec() : startRec(); } else APP.photoReq = true; }
 function fnButton() { rcPress('rcFn'); D.gimbalTarget = Math.abs(D.gimbal) > 2 ? 0 : -90; sfx.beep(800); }
 function cycleZoom() { const z = [1, 3, 7, 28]; setZoom(z[(z.indexOf(D.zoom) + 1) % z.length]); }
-function setZoom(z) { D.zoom = z; $$('#zoom button').forEach(b => b.classList.toggle('on', +b.dataset.z === z)); if (z >= 7) toast(z === 7 ? '7x — 162 mm tele camera' : '28x hybrid zoom'); }
+function setZoom(z) { D.zoom = z; $$('#zoom button').forEach(b => b.classList.toggle('on', +b.dataset.z === z)); if (z >= 7) toast(z === 7 ? '7x tele' : '28x zoom'); }
 function pausePress() {
   if (L.cur) L.st.paused = true;
   if (D.lowBatT > 0) { D.lowBatT = -1; toast('Low-battery RTH cancelled', 'warn'); }
   if (D.auto && D.auto.type !== 'force') endAuto(D.auto.type === 'rth' ? 'RTH cancelled — hovering' : 'Cancelled — hovering');
-  if (D.airborne) { D.pauseT = 1.2; D.hold = null; toast('Flight paused — braking to a hover'); } else toast('Flight Pause (short press). Hold for Return to Home');
+  if (D.airborne) { D.pauseT = 1.2; D.hold = null; toast('Paused'); } else toast('Tap: pause · Hold: Return to Home');
   sfx.beep(700);
 }
 const HOLD = { rth: { t: 0, on: false, fired: false, btn: '#btnRth' }, to: { t: 0, on: false, fired: false, btn: '#btnTakeoff' } };
@@ -1670,7 +1726,7 @@ const fmtT = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.
 /* ---------- cameras ---------- */
 const VIEW = { mode: 'chase', oy: 0, op: 0.24, dist: 1.8, chaseYaw: 0, off: new V3(0, 0.6, 2.2), pt: new V3(), pz: 1, az: 1 };
 const VIEWNAME = { chase: 'Chase', fpv: 'Camera', pilot: 'Pilot' };
-function setView(m, quiet) { VIEW.mode = m; $('#viewLbl').textContent = VIEWNAME[m]; if (!quiet) toast({ chase: 'Chase view — camera behind the drone', fpv: 'Camera view — what the gimbal camera sees', pilot: 'Pilot view — line of sight from where you stand' }[m]); if (L.cur) L.st.view = m; }
+function setView(m, quiet) { VIEW.mode = m; $('#viewLbl').textContent = VIEWNAME[m]; if (!quiet) toast({ chase: 'Chase view', fpv: 'Camera view', pilot: 'Pilot view' }[m]); if (L.cur) L.st.view = m; }
 function cycleView() { const o = ['chase', 'fpv', 'pilot']; setView(o[(o.indexOf(VIEW.mode) + 1) % 3]); }
 function fpvFov(aspect) { return 2 * Math.atan(Math.tan(42 * DEG) / Math.sqrt(1 + aspect * aspect) / D.zoom) / DEG; }
 const _gp = new V3(), _q = new THREE.Quaternion();
@@ -1680,7 +1736,7 @@ function updateCameras(dt, aspect) {
   if (VIEW.dbg) { cam.position.set(...VIEW.dbg.pos); cam.lookAt(...VIEW.dbg.tgt); cam.fov = VIEW.dbg.fov || 35; cam.near = 0.01; return; } // ?debug inspection camera
   if (APP.paused && !APP.started) { // idle orbit behind the menu
     const t = performance.now() / 1000 * 0.07;
-    cam.position.set(D.pos.x + Math.sin(t) * 3.6, D.pos.y + 1.25, D.pos.z + Math.cos(t) * 3.6); cam.lookAt(D.pos.x, D.pos.y + 0.25, D.pos.z); cam.fov = 45; return;
+    cam.position.set(D.pos.x + Math.sin(t) * 2.9, D.pos.y + 0.95, D.pos.z + Math.cos(t) * 2.9); cam.lookAt(D.pos.x, D.pos.y + 0.2, D.pos.z); cam.fov = 42; return;
   }
   if (VIEW.mode === 'fpv') { cam.position.copy(fpvCam.position); cam.quaternion.copy(fpvCam.quaternion); cam.fov = fpvFov(aspect); cam.near = 0.03; return; }
   cam.near = 0.05;
@@ -2160,7 +2216,7 @@ function placeLabels(w, h) {
     else if (a === 'shutter') { rcPress('rcShutter'); shutter(); }
     else if (a === 'fn') { rcPress('rcFn'); fnButton(); }
     else if (a === 'pv') { rcPress('rcPV'); togglePV(); }
-    else if (a === 'power') { rcPress('rcPower'); toast('Power button: press once to check the battery, then press again and hold to turn the remote on or off'); }
+    else if (a === 'power') { rcPress('rcPower'); toast('Power: tap, then hold to switch on or off'); }
   });
   wrap.addEventListener('pointermove', e => {
     if (drag?.s) setStick(drag.s, e);
@@ -2274,8 +2330,8 @@ function hold(key, cond, secs) { L.st[key] = cond ? (L.st[key] || 0) + L.dt : 0;
 function accum(key, cond) { if (cond) L.st[key] = (L.st[key] || 0) + L.dt; return L.st[key] || 0; }
 const inZone = i => { const it = COURSE.items[i]; return it && itemReached(it); };
 const ringStep = (n, title, text) => ({ title, text, check: () => COURSE.next >= n, prog: () => `Ring ${Math.min(COURSE.next + 1, COURSE.items.length)} of ${COURSE.items.length}` });
-const TAKEOFF = { title: 'Take off', text: () => `Start the motors with the stick command (both sticks down and inward) and push the throttle up. Shortcut: hold <kbd>T</kbd> or the takeoff button for 1 second.`, check: () => D.airborne && D.agl > 0.8 };
-const LAND_PAD = (r = 1.5) => ({ title: 'Land on the H', text: () => `Fly back over the orange pad, then hold the throttle down ${kb('thr', -1)}. Touch down within ${r} m of the centre.`, check: () => { if (!D.airborne && D.landedAt && padDist() > r && L.st.lastLandWarn !== D.landedAt) { L.st.lastLandWarn = D.landedAt; toast(`Landed ${padDist().toFixed(1)} m from the pad. Take off and try again`, 'warn'); } return !D.airborne && padDist() < r; }, prog: () => `${padDist().toFixed(1)} m from the pad` });
+const TAKEOFF = { title: 'Take off', text: () => `Sticks down and in to start the motors, then throttle up. Or hold <kbd>T</kbd>.`, check: () => D.airborne && D.agl > 0.8 };
+const LAND_PAD = (r = 1.5) => ({ title: 'Land on the H', text: () => `Fly over the orange pad and hold the throttle down ${kb('thr', -1)}.`, check: () => { if (!D.airborne && D.landedAt && padDist() > r && L.st.lastLandWarn !== D.landedAt) { L.st.lastLandWarn = D.landedAt; toast(`${padDist().toFixed(1)} m off the pad. Try again`, 'warn'); } return !D.airborne && padDist() < r; }, prog: () => `${padDist().toFixed(1)} m from the pad` });
 const square = [[-12.5, -6], [-12.5, -31], [12.5, -31], [12.5, -6]];
 
 const LESSONS = [
@@ -2283,27 +2339,27 @@ const LESSONS = [
     id: 'remote', title: 'Know your remote', sum: 'Every stick, switch and button on the RC-N1, on the ground with the motors locked.', view: 'chase', locked: true,
     setup() { resetDrone({ mode: 'C', locked: true }); },
     steps: [
-      { title: 'Flight mode switch', text: () => `The three-position switch picks the flight mode: <b>C</b>ine (slow and smooth), <b>N</b>ormal, and <b>S</b>port (fast, obstacle sensing off). It's on C. Flip it to <b>N</b>: press <kbd>2</kbd> or click N on the remote.`, hl: ['rcMode'], check: () => D.mode === 'N' },
-      { title: 'Throttle up', text: () => `Push the ${sn('thr')} up ${kb('thr', 1)}. In the air this makes the drone <b>climb</b>.`, hint: () => [hint('thr', 1)], hl: () => ['well' + axOf('thr')[0].toUpperCase()], check: () => INP.thr > 0.8 },
-      { title: 'Throttle down', text: () => `Pull it all the way down ${kb('thr', -1)}: <b>descend</b>. DJI sticks spring back to the centre, and centre means "hold this height".`, hint: () => [hint('thr', -1)], check: () => INP.thr < -0.8 },
-      { title: 'Yaw', text: () => `Push the ${sn('yaw')} left ${kb('yaw', -1)} and right ${kb('yaw', 1)}. Yaw spins the drone on the spot, so it changes where the nose and camera point.`, hint: () => [hint('yaw', L.st.yl ? 1 : -1)], check: () => { if (INP.yaw < -0.7) L.st.yl = 1; if (INP.yaw > 0.7) L.st.yr = 1; return L.st.yl && L.st.yr; } },
-      { title: 'Pitch', text: () => `Push the ${sn('pit')} up ${kb('pit', 1)} and down ${kb('pit', -1)}. Pitch tilts the nose and moves the drone <b>forward</b> or <b>backward</b>.`, hint: () => [hint('pit', L.st.pf ? -1 : 1)], check: () => { if (INP.pit > 0.7) L.st.pf = 1; if (INP.pit < -0.7) L.st.pb = 1; return L.st.pf && L.st.pb; } },
-      { title: 'Roll', text: () => `Push the ${sn('rol')} left ${kb('rol', -1)} and right ${kb('rol', 1)}. Roll slides the drone sideways without turning it.`, hint: () => [hint('rol', L.st.rl ? 1 : -1)], check: () => { if (INP.rol < -0.7) L.st.rl = 1; if (INP.rol > 0.7) L.st.rr = 1; return L.st.rl && L.st.rr; } },
-      { title: 'Gimbal dial', text: () => `The dial on the left shoulder tilts the camera. Turn it to point the camera below −45°: hold <kbd>E</kbd> (<kbd>Q</kbd> tilts up), scroll on the dial, or use the gamepad triggers. Press <kbd>C</kbd> to see the camera view.`, hl: ['rcDial'], check: () => D.gimbal < -45, prog: () => `Gimbal ${Math.round(D.gimbal)}°` },
-      { title: 'Recentre with Fn', text: () => `The Fn button on the back recentres the gimbal by default. Press <kbd>F</kbd>.`, hl: ['rcFn'], check: () => D.gimbal > -3 && D.gimbalTarget == null },
-      { title: 'Pause / RTH button', text: () => `A short press is <b>Flight Pause</b>: the drone brakes and hovers. Holding it for a second starts <b>Return to Home</b>. Give it a short press now: <kbd>Space</kbd> or <kbd>H</kbd>.`, hl: ['rcRth'], check: () => L.st.paused }
+      { title: 'Flight mode switch', text: () => `<b>C</b> slow, <b>N</b> normal, <b>S</b> fast. Switch to <b>N</b>: press <kbd>2</kbd>.`, hl: ['rcMode'], check: () => D.mode === 'N' },
+      { title: 'Throttle up', text: () => `Push the ${sn('thr')} up ${kb('thr', 1)} to climb.`, hint: () => [hint('thr', 1)], hl: () => ['well' + axOf('thr')[0].toUpperCase()], check: () => INP.thr > 0.8 },
+      { title: 'Throttle down', text: () => `Pull it down ${kb('thr', -1)} to descend. Centre holds height.`, hint: () => [hint('thr', -1)], check: () => INP.thr < -0.8 },
+      { title: 'Yaw', text: () => `Push the ${sn('yaw')} left ${kb('yaw', -1)} and right ${kb('yaw', 1)} to turn on the spot.`, hint: () => [hint('yaw', L.st.yl ? 1 : -1)], check: () => { if (INP.yaw < -0.7) L.st.yl = 1; if (INP.yaw > 0.7) L.st.yr = 1; return L.st.yl && L.st.yr; } },
+      { title: 'Pitch', text: () => `Push the ${sn('pit')} up ${kb('pit', 1)} and down ${kb('pit', -1)} to fly forward and back.`, hint: () => [hint('pit', L.st.pf ? -1 : 1)], check: () => { if (INP.pit > 0.7) L.st.pf = 1; if (INP.pit < -0.7) L.st.pb = 1; return L.st.pf && L.st.pb; } },
+      { title: 'Roll', text: () => `Push the ${sn('rol')} left ${kb('rol', -1)} and right ${kb('rol', 1)} to slide sideways.`, hint: () => [hint('rol', L.st.rl ? 1 : -1)], check: () => { if (INP.rol < -0.7) L.st.rl = 1; if (INP.rol > 0.7) L.st.rr = 1; return L.st.rl && L.st.rr; } },
+      { title: 'Gimbal dial', text: () => `Tilt the camera below −45°: hold <kbd>E</kbd>. <kbd>Q</kbd> tilts up.`, hl: ['rcDial'], check: () => D.gimbal < -45, prog: () => `Gimbal ${Math.round(D.gimbal)}°` },
+      { title: 'Recentre with Fn', text: () => `Press <kbd>F</kbd> to recentre the camera.`, hl: ['rcFn'], check: () => D.gimbal > -3 && D.gimbalTarget == null },
+      { title: 'Pause / RTH button', text: () => `Tap to pause, hold for Return to Home. Tap it now: <kbd>Space</kbd>.`, hl: ['rcRth'], check: () => L.st.paused }
     ]
   },
   {
     id: 'hover', title: 'Motors, takeoff and hover', sum: 'Start the motors with the stick command, lift off, hold a steady hover, land and stop the motors.', view: 'chase',
     setup() { resetDrone(); setCourse([{ type: 'zone', x: 0, z: 0, y: 3, r: 2.5, hy: 1.5, manual: true }]); },
     steps: [
-      { title: 'Start the motors (CSC)', text: () => `DJI drones start their motors with the <b>Combination Stick Command</b>: pull <b>both sticks down and inward</b> together and hold for a moment. Keys: <kbd>S</kbd>+<kbd>D</kbd> and <kbd>↓</kbd>+<kbd>←</kbd> at the same time. Down-and-outward works too.`, hint: () => [{ s: 'L', x: 1, y: -1 }, { s: 'R', x: -1, y: -1 }], hl: ['wellL', 'wellR'], check: () => D.motors },
-      { title: 'Lift off', text: () => `Let both sticks return to centre, then push the throttle (${sn('thr')}) gently up ${kb('thr', 1)}.`, hint: () => [hint('thr', 1)], check: () => D.airborne && D.agl > 0.6 },
-      { title: 'Climb to 2–4 m', text: () => `Climb until <b>H</b> (bottom left) reads 2 to 4 m, then let go of the throttle. With GPS the drone holds its height and position by itself.`, check: () => hold('alt', relH() >= 2 && relH() <= 4 && Math.abs(D.vel.y) < 0.4, 1), prog: () => `H ${relH().toFixed(1)} m` },
-      { title: 'Hover 5 s in the zone', text: () => `Stay inside the blue cylinder for 5 seconds. Use small taps; the drone brakes as soon as you let go.`, check: () => hold('hov', inZone(0), 5), prog: () => `${(L.st.hov || 0).toFixed(1)} / 5.0 s` },
-      { title: 'Land', text: () => `Hold the throttle down ${kb('thr', -1)}. Close to the ground the drone slows down by itself. Keep holding until it touches down.`, hint: () => [hint('thr', -1)], check: () => !D.airborne },
-      { title: 'Stop the motors', text: () => `Keep holding the throttle down for about a second until the motors stop. The stick command also stops them on the ground.`, hint: () => [hint('thr', -1)], check: () => !D.motors }
+      { title: 'Start the motors (CSC)', text: () => `Both sticks down and inward: <kbd>S</kbd>+<kbd>D</kbd> with <kbd>↓</kbd>+<kbd>←</kbd>.`, hint: () => [{ s: 'L', x: 1, y: -1 }, { s: 'R', x: -1, y: -1 }], hl: ['wellL', 'wellR'], check: () => D.motors },
+      { title: 'Lift off', text: () => `Centre the sticks, then throttle up ${kb('thr', 1)}.`, hint: () => [hint('thr', 1)], check: () => D.airborne && D.agl > 0.6 },
+      { title: 'Climb to 2–4 m', text: () => `Let go when <b>H</b> (bottom left) reads 2–4 m.`, check: () => hold('alt', relH() >= 2 && relH() <= 4 && Math.abs(D.vel.y) < 0.4, 1), prog: () => `H ${relH().toFixed(1)} m` },
+      { title: 'Hover 5 s in the zone', text: () => `Stay inside the blue cylinder. Small taps.`, check: () => hold('hov', inZone(0), 5), prog: () => `${(L.st.hov || 0).toFixed(1)} / 5.0 s` },
+      { title: 'Land', text: () => `Hold the throttle down ${kb('thr', -1)} until it touches down.`, hint: () => [hint('thr', -1)], check: () => !D.airborne },
+      { title: 'Stop the motors', text: () => `Keep holding down until the motors stop.`, hint: () => [hint('thr', -1)], check: () => !D.motors }
     ]
   },
   {
@@ -2311,17 +2367,17 @@ const LESSONS = [
     setup() { resetDrone(); },
     steps: [
       TAKEOFF,
-      { title: 'Climb to 10 m', text: () => `Climb with the throttle ${kb('thr', 1)} until H reads 9–11 m, and hold it there for 3 seconds.`, check: () => hold('a', relH() > 9 && relH() < 11, 3), prog: () => `H ${relH().toFixed(1)} m` },
-      { title: 'Yaw 360° right', text: () => `Hold yaw right ${kb('yaw', 1)} and turn a full circle clockwise. The red LEDs mark the front arms.`, enter() { L.st.yacc = 0; }, hint: () => [hint('yaw', 1)], check: () => (L.st.yacc += D.yawStep) >= 2 * Math.PI - 0.1, prog: () => `${Math.max(0, L.st.yacc / DEG).toFixed(0)}° / 360°` },
-      { title: 'Yaw 360° left', text: () => `Now a full circle the other way ${kb('yaw', -1)}.`, enter() { L.st.yacc = 0; }, hint: () => [hint('yaw', -1)], check: () => (L.st.yacc -= D.yawStep) >= 2 * Math.PI - 0.1, prog: () => `${Math.max(0, L.st.yacc / DEG).toFixed(0)}° / 360°` },
-      { title: 'Descend to 3 m', text: () => `Bring it down ${kb('thr', -1)} to 2.5–3.5 m and hold for 2 seconds.`, check: () => hold('b', relH() > 2.5 && relH() < 3.5, 2), prog: () => `H ${relH().toFixed(1)} m` },
+      { title: 'Climb to 10 m', text: () => `Throttle up ${kb('thr', 1)} to 9–11 m and hold 3 s.`, check: () => hold('a', relH() > 9 && relH() < 11, 3), prog: () => `H ${relH().toFixed(1)} m` },
+      { title: 'Yaw 360° right', text: () => `Hold yaw right ${kb('yaw', 1)} for a full turn.`, enter() { L.st.yacc = 0; }, hint: () => [hint('yaw', 1)], check: () => (L.st.yacc += D.yawStep) >= 2 * Math.PI - 0.1, prog: () => `${Math.max(0, L.st.yacc / DEG).toFixed(0)}° / 360°` },
+      { title: 'Yaw 360° left', text: () => `Now a full turn left ${kb('yaw', -1)}.`, enter() { L.st.yacc = 0; }, hint: () => [hint('yaw', -1)], check: () => (L.st.yacc -= D.yawStep) >= 2 * Math.PI - 0.1, prog: () => `${Math.max(0, L.st.yacc / DEG).toFixed(0)}° / 360°` },
+      { title: 'Descend to 3 m', text: () => `Down to 2.5–3.5 m ${kb('thr', -1)} and hold 2 s.`, check: () => hold('b', relH() > 2.5 && relH() < 3.5, 2), prog: () => `H ${relH().toFixed(1)} m` },
       LAND_PAD(1.5)
     ]
   },
   {
     id: 'box1', title: 'Forward, back and sideways', sum: 'Fly through five rings using only pitch and roll. The nose keeps pointing away from you.', view: 'chase',
     setup() { resetDrone(); setCourse([{ type: 'ring', x: 0, y: 4, z: -22, yaw: 0 }, { type: 'ring', x: -16, y: 4, z: -22, yaw: -Math.PI / 2 }, { type: 'ring', x: 16, y: 4, z: -22, yaw: Math.PI / 2 }, { type: 'ring', x: 16, y: 4, z: -4, yaw: Math.PI }, { type: 'ring', x: 0, y: 4, z: -4, yaw: -Math.PI / 2 }]); },
-    always() { if (D.airborne && Math.abs(wrapPi(D.yaw)) > 25 * DEG) L.warn = 'Nose has turned. Yaw back so it points away from you (north).'; },
+    always() { if (D.airborne && Math.abs(wrapPi(D.yaw)) > 25 * DEG) L.warn = 'Yaw back to face north'; },
     steps: [
       TAKEOFF,
       ringStep(1, 'Ring 1: forward', () => `Climb to about 4 m, then fly <b>forward</b> through ring 1 with the ${sn('pit')} ${kb('pit', 1)}. No yaw in this lesson.`),
@@ -2335,14 +2391,14 @@ const LESSONS = [
   {
     id: 'box2', title: 'Square pattern, tail-in', sum: 'Visit four corners of a 25 m square at 5 m, mixing pitch and roll. No yaw.', view: 'pilot',
     setup() { resetDrone(); setCourse(square.concat([square[0]]).map(([x, z], i) => ({ type: 'zone', x, z, y: 5, r: 2.2, hy: 1.6, label: 'ABCDA'[i] }))); },
-    always() { if (D.airborne && Math.abs(wrapPi(D.yaw)) > 25 * DEG) L.warn = 'Keep the nose pointing north, away from you.'; },
+    always() { if (D.airborne && Math.abs(wrapPi(D.yaw)) > 25 * DEG) L.warn = 'Keep the nose facing north'; },
     steps: [
       TAKEOFF,
-      { title: 'Corner A', text: () => `This lesson starts in the <b>Pilot view</b>, from where you'd really stand. Climb to 5 m and fly to cone A (front-left). Press <kbd>C</kbd> if you need another view.`, check: () => COURSE.next >= 1 },
-      { title: 'Corner B', text: () => `Straight forward ${kb('pit', 1)} to B.`, check: () => COURSE.next >= 2 },
+      { title: 'Corner A', text: () => `Climb to 5 m and fly to cone A. <kbd>C</kbd> changes view.`, check: () => COURSE.next >= 1 },
+      { title: 'Corner B', text: () => `Forward ${kb('pit', 1)} to B.`, check: () => COURSE.next >= 2 },
       { title: 'Corner C', text: () => `Slide right ${kb('rol', 1)} to C.`, check: () => COURSE.next >= 3 },
-      { title: 'Corner D', text: () => `Fly back toward you ${kb('pit', -1)} to D.`, check: () => COURSE.next >= 4 },
-      { title: 'Back to A', text: () => `Slide left ${kb('rol', -1)} to close the square.`, check: () => COURSE.next >= 5 },
+      { title: 'Corner D', text: () => `Back ${kb('pit', -1)} to D.`, check: () => COURSE.next >= 4 },
+      { title: 'Back to A', text: () => `Slide left ${kb('rol', -1)} to A.`, check: () => COURSE.next >= 5 },
       LAND_PAD(1.5)
     ]
   },
@@ -2352,25 +2408,25 @@ const LESSONS = [
     always() { if (D.airborne && hs() > 1.5) { L.st.mv += L.dt; const va = Math.atan2(D.vel.x, -D.vel.z); if (Math.abs(wrapPi(va - D.yaw)) < 30 * DEG) L.st.al += L.dt; } },
     steps: [
       TAKEOFF,
-      { title: 'Fly to A, nose first', text: () => `Yaw ${kb('yaw', -1)} until the nose points at cone A, then fly forward ${kb('pit', 1)}. This is how most real flights look.`, check: () => COURSE.next >= 1 },
-      { title: 'Turn and fly to B', text: () => `At each corner: stop, yaw toward the next cone, then fly forward. Smooth pilots blend yaw with a little pitch.`, check: () => COURSE.next >= 2 },
-      { title: 'C', text: () => `Same again for C.`, check: () => COURSE.next >= 3 },
-      { title: 'D', text: () => `And D. When the nose points toward you, the drone's left is your right. Trust the camera view if it helps.`, check: () => COURSE.next >= 4 },
+      { title: 'Fly to A, nose first', text: () => `Yaw ${kb('yaw', -1)} to face cone A, then fly forward ${kb('pit', 1)}.`, check: () => COURSE.next >= 1 },
+      { title: 'Turn and fly to B', text: () => `Stop, yaw to the next cone, fly forward.`, check: () => COURSE.next >= 2 },
+      { title: 'C', text: () => `Same for C.`, check: () => COURSE.next >= 3 },
+      { title: 'D', text: () => `And D. Nose toward you means the controls feel reversed.`, check: () => COURSE.next >= 4 },
       { title: 'Back to A', text: () => `Finish the square.`, check: () => COURSE.next >= 5 },
       LAND_PAD(1.5)
     ],
-    prog: () => `Nose-forward: ${L.st.mv > 1 ? Math.round(L.st.al / L.st.mv * 100) : 0}% of the time`
+    prog: () => `Nose first ${L.st.mv > 1 ? Math.round(L.st.al / L.st.mv * 100) : 0}% of the time`
   },
   {
     id: 'nosein', title: 'Nose-in orientation', sum: 'The drone faces you, so left and right feel reversed. The hardest habit to learn.', view: 'pilot',
     setup() { resetDrone({ x: 0, z: -14, alt: 4, yaw: Math.PI }); setCourse([{ type: 'zone', x: -9, z: -14, y: 4, r: 1.8, hy: 1.4, label: 'L' }, { type: 'zone', x: 9, z: -14, y: 4, r: 1.8, hy: 1.4, label: 'R' }, { type: 'zone', x: 0, z: -5, y: 4, r: 1.8, hy: 1.4, label: '1' }, { type: 'zone', x: 0, z: -22, y: 4, r: 1.8, hy: 1.4, label: '2' }]); },
     steps: [
-      { title: 'Your left marker', text: () => `The drone is hovering and <b>facing you</b>. From here its right is your left, and "forward" comes toward you. Fly to marker <b>L</b> on <b>your</b> left. Hint: that's roll <b>right</b> ${kb('rol', 1)}.`, check: () => COURSE.next >= 1 },
-      { title: 'Your right marker', text: () => `Now to marker <b>R</b> on your right. Picture yourself sitting in the drone.`, check: () => COURSE.next >= 2 },
-      { title: 'Come toward you', text: () => `Fly to marker 1, closer to you. Pitch <b>forward</b> ${kb('pit', 1)} moves a nose-in drone <b>toward</b> you.`, check: () => COURSE.next >= 3 },
-      { title: 'Back away', text: () => `Now pitch back ${kb('pit', -1)} to marker 2, far away.`, check: () => COURSE.next >= 4 },
-      { title: 'Hold nose-in 5 s', text: () => `Hover for 5 seconds with the nose pointing at you (within 25°), staying within 3 m of where you are.`, enter() { L.st.hp = D.pos.clone(); }, check: () => { const face = Math.atan2(PILOT.x - D.pos.x, -(PILOT.z - D.pos.z)); return hold('ni', Math.abs(wrapPi(face - D.yaw)) < 25 * DEG && D.pos.distanceTo(L.st.hp) < 3, 5); }, prog: () => `${(L.st.ni || 0).toFixed(1)} / 5.0 s` },
-      { title: 'Land', text: () => `Land anywhere on the field.`, check: () => !D.airborne }
+      { title: 'Your left marker', text: () => `It faces you, so its right is your left. Fly to <b>L</b>: roll right ${kb('rol', 1)}.`, check: () => COURSE.next >= 1 },
+      { title: 'Your right marker', text: () => `Now to <b>R</b>, on your right.`, check: () => COURSE.next >= 2 },
+      { title: 'Come toward you', text: () => `Pitch forward ${kb('pit', 1)} to marker 1. It comes toward you.`, check: () => COURSE.next >= 3 },
+      { title: 'Back away', text: () => `Pitch back ${kb('pit', -1)} to marker 2.`, check: () => COURSE.next >= 4 },
+      { title: 'Hold nose-in 5 s', text: () => `Hover facing you for 5 s.`, enter() { L.st.hp = D.pos.clone(); }, check: () => { const face = Math.atan2(PILOT.x - D.pos.x, -(PILOT.z - D.pos.z)); return hold('ni', Math.abs(wrapPi(face - D.yaw)) < 25 * DEG && D.pos.distanceTo(L.st.hp) < 3, 5); }, prog: () => `${(L.st.ni || 0).toFixed(1)} / 5.0 s` },
+      { title: 'Land', text: () => `Hold the throttle down ${kb('thr', -1)} until it touches down.`, check: () => !D.airborne }
     ]
   },
   {
@@ -2378,10 +2434,10 @@ const LESSONS = [
     setup() { resetDrone(); setCourse([{ type: 'zone', x: TOWER.x, z: TOWER.z + 18, y: 14, r: 3, hy: 2.5, label: 'S' }]); },
     steps: [
       TAKEOFF,
-      { title: 'Fly to the start point', text: () => `Climb to about 14 m and fly to marker S, south of the water tower. Watch the power line to the east of the tower.`, check: () => COURSE.next >= 1 },
-      { title: 'Face the tower', text: () => `Yaw until the nose points at the tower (within 15°). Try the camera view <kbd>C</kbd>.`, check: () => { const a = Math.atan2(TOWER.x - D.pos.x, -(TOWER.z - D.pos.z)); return hold('f', Math.abs(wrapPi(a - D.yaw)) < 15 * DEG, 0.6); } },
+      { title: 'Fly to the start point', text: () => `Climb to ~14 m and fly to marker S. Mind the power line.`, check: () => COURSE.next >= 1 },
+      { title: 'Face the tower', text: () => `Yaw until the nose points at the tower.`, check: () => { const a = Math.atan2(TOWER.x - D.pos.x, -(TOWER.z - D.pos.z)); return hold('f', Math.abs(wrapPi(a - D.yaw)) < 15 * DEG, 0.6); } },
       {
-        title: 'Orbit 360°', text: () => `Fly a full circle around the tower, 10–28 m away, keeping it in the camera. Hold roll to one side (${kb('rol', 1)}) and add a little yaw the other way (${kb('yaw', -1)}). Use pitch to adjust distance.`,
+        title: 'Orbit 360°', text: () => `Circle 10–28 m out: roll ${kb('rol', 1)} plus a little yaw ${kb('yaw', -1)}.`,
         enter() { L.st.oa = 0; L.st.pa = null; },
         check: () => {
           const dx = D.pos.x - TOWER.x, dz = D.pos.z - TOWER.z, r = Math.hypot(dx, dz), a = Math.atan2(dz, dx);
@@ -2402,7 +2458,7 @@ const LESSONS = [
     },
     steps: [
       TAKEOFF,
-      { title: 'Fly the figure eight', text: () => `Fly through rings 1 to 7 in order at 5 m. Point the nose where you're going and blend yaw with pitch. Switch the flight mode to Cine (<kbd>1</kbd>) if it feels too fast.`, check: () => COURSE.next >= 7, prog: () => `Ring ${Math.min(COURSE.next + 1, 7)} of 7` },
+      { title: 'Fly the figure eight', text: () => `Rings 1–7 at 5 m, nose first. Too fast? Cine mode <kbd>1</kbd>.`, check: () => COURSE.next >= 7, prog: () => `Ring ${Math.min(COURSE.next + 1, 7)} of 7` },
       LAND_PAD(1.5)
     ]
   },
@@ -2411,9 +2467,9 @@ const LESSONS = [
     setup() { resetDrone(); setCourse([{ type: 'pad', x: ROOF.x, z: ROOF.z, r: 1.2, label: 'H' }]); },
     steps: [
       TAKEOFF,
-      { title: 'Climb above the roof', text: () => `The clubhouse roof is 8 m up. Climb above 12 m before you go near it.`, check: () => relH() > 12, prog: () => `H ${relH().toFixed(1)} m` },
-      { title: 'Land on the roof pad', text: () => `Fly over the orange pad on the roof, stop, then descend slowly. Touch down within 1.2 m of the centre. Tilting the gimbal down (<kbd>E</kbd>) and using the camera view (<kbd>C</kbd>) helps.`, check: () => !D.airborne && padDist(ROOF.x, ROOF.z) < 1.2 && D.pos.y > ROOF.top - 0.5, prog: () => `${padDist(ROOF.x, ROOF.z).toFixed(1)} m from the roof pad` },
-      { title: 'Take off again', text: () => `Push the throttle up to take off from the roof.`, check: () => D.airborne && D.agl > 1.5 },
+      { title: 'Climb above the roof', text: () => `Climb above 12 m.`, check: () => relH() > 12, prog: () => `H ${relH().toFixed(1)} m` },
+      { title: 'Land on the roof pad', text: () => `Stop over the roof pad, then descend slowly.`, check: () => !D.airborne && padDist(ROOF.x, ROOF.z) < 1.2 && D.pos.y > ROOF.top - 0.5, prog: () => `${padDist(ROOF.x, ROOF.z).toFixed(1)} m from the roof pad` },
+      { title: 'Take off again', text: () => `Throttle up to take off.`, check: () => D.airborne && D.agl > 1.5 },
       LAND_PAD(1.0)
     ]
   },
@@ -2421,10 +2477,10 @@ const LESSONS = [
     id: 'atti', title: 'Wind and ATTI mode', sum: 'No GPS and a 7 m/s wind. The drone drifts and won\'t brake by itself. You hold it in place.', view: 'chase', wind: 7, gps: false,
     setup() { resetDrone({ gps: false }); setCourse([{ type: 'zone', x: 0, z: -8, y: 5, r: 3, hy: 2, label: '1', manual: true }, { type: 'zone', x: -23.6, z: -16.2, y: 5, r: 2.6, hy: 2, label: '2' }]); },
     steps: [
-      { title: 'Read the warning', text: () => `GPS is off, so the drone is in <b>ATTI</b> mode: sticks set its tilt directly, nothing holds its position, and it drifts with the wind. The rear status LEDs blink yellow. Take off when ready.`, check: () => D.airborne && D.agl > 0.8 },
-      { title: 'Hold in zone 1 for 15 s', text: () => `Get into zone 1 and stay in it for a total of 15 seconds. The wind pushes you east, so keep leaning into it with small, steady corrections.`, check: () => accum('z', inZone(0)) >= 15, prog: () => `${(L.st.z || 0).toFixed(1)} / 15 s in the zone` },
-      { title: 'Fly upwind to zone 2', text: () => `Fly into the wind to zone 2. Expect it to feel slow going out and fast coming back.`, check: () => { COURSE.next = Math.max(COURSE.next, 1); return COURSE.next >= 2; } },
-      { title: 'Land on the H', text: () => `Come back and land within 2 m of the pad. Arrive slowly: in ATTI the drone keeps sliding after you centre the sticks.`, check: () => !D.airborne && padDist() < 2, prog: () => `${padDist().toFixed(1)} m from the pad` }
+      { title: 'No GPS', text: () => `No GPS: it drifts with the wind and won't brake. Take off when ready.`, check: () => D.airborne && D.agl > 0.8 },
+      { title: 'Hold in zone 1 for 15 s', text: () => `Stay in zone 1. Lean into the wind.`, check: () => accum('z', inZone(0)) >= 15, prog: () => `${(L.st.z || 0).toFixed(1)} / 15 s in the zone` },
+      { title: 'Fly upwind to zone 2', text: () => `Fly into the wind to zone 2.`, check: () => { COURSE.next = Math.max(COURSE.next, 1); return COURSE.next >= 2; } },
+      { title: 'Land on the H', text: () => `Land within 2 m. Arrive slowly: it keeps sliding.`, check: () => !D.airborne && padDist() < 2, prog: () => `${padDist().toFixed(1)} m from the pad` }
     ]
   },
   {
@@ -2432,11 +2488,11 @@ const LESSONS = [
     setup() { resetDrone(); setCourse([{ type: 'zone', x: 40, z: -76, y: 25, r: 5, hy: 5, label: 'F' }]); },
     steps: [
       TAKEOFF,
-      { title: 'Fly to marker F', text: () => `Fly about 85 m out to marker F, 25 m up, north-east of the field. Sport mode (<kbd>3</kbd>) gets you there faster.`, check: () => COURSE.next >= 1 },
-      { title: 'Hold RTH for 1 second', text: () => `Press and <b>hold</b> the Pause/RTH button (<kbd>H</kbd>, or the RTH button on the left) until it beeps.`, hl: ['rcRth'], check: () => D.auto?.type === 'rth' },
-      { title: 'Watch it climb', text: () => `More than 50 m from home, RTH first climbs to the RTH altitude (40 m in this lesson), turns toward home, then flies back. Wait until it starts flying home.`, check: () => D.auto?.type === 'rth' && D.auto.phase === 'fly', },
-      { title: 'Cancel with a short press', enter() { L.st.paused = false; }, text: () => `Changed your mind? A <b>short</b> press of Pause/RTH (<kbd>Space</kbd>) cancels RTH and the drone hovers.`, hl: ['rcRth'], check: () => !D.auto && L.st.paused },
-      { title: 'RTH again and land', text: () => `Hold RTH again and let it come home, descend and land on its own. The motors stop when it's done.`, check: () => !D.airborne && !D.motors && padDist() < 2.5 }
+      { title: 'Fly to marker F', text: () => `Fly 85 m out to marker F. Sport mode <kbd>3</kbd> is faster.`, check: () => COURSE.next >= 1 },
+      { title: 'Hold RTH for 1 second', text: () => `Hold <kbd>H</kbd> until it beeps.`, hl: ['rcRth'], check: () => D.auto?.type === 'rth' },
+      { title: 'Watch it climb', text: () => `It climbs to 40 m, turns, then flies home.`, check: () => D.auto?.type === 'rth' && D.auto.phase === 'fly', },
+      { title: 'Cancel with a short press', enter() { L.st.paused = false; }, text: () => `Tap <kbd>Space</kbd> to cancel.`, hl: ['rcRth'], check: () => !D.auto && L.st.paused },
+      { title: 'RTH again and land', text: () => `Hold RTH again and let it land itself.`, check: () => !D.airborne && !D.motors && padDist() < 2.5 }
     ]
   },
   {
@@ -2446,15 +2502,15 @@ const LESSONS = [
       const tp = new V3(OFFICE.x, OFFICE.h * 0.5, OFFICE.z), dir = tp.clone().sub(fpvCam.position), dist = dir.length(); dir.normalize();
       const fwd = new V3(0, 0, -1).applyQuaternion(fpvCam.quaternion), ang = Math.acos(clamp(fwd.dot(dir), -1, 1)) / DEG;
       if (L.cur.steps[L.step].title !== 'Frame and shoot') return;
-      if (ang < 9 && dist > 40 && dist < 260) { L.st.photo = true; toast('Nice shot — the tower is centred', 'ok'); }
-      else toast(ang >= 9 ? `Tower is ${ang.toFixed(0)}° off centre. Line it up with the crosshair` : 'Get between 40 and 260 m from the tower', 'warn');
+      if (ang < 9 && dist > 40 && dist < 260) { L.st.photo = true; toast('Nice shot', 'ok'); }
+      else toast(ang >= 9 ? `Tower is ${ang.toFixed(0)}° off centre` : 'Stay 40–260 m from the tower', 'warn');
     },
     steps: [
-      { title: 'Switch to Cine mode', text: () => `Cine mode limits speed to 5 m/s and climbs at 1 m/s, so every move is slow and smooth. Flip the switch to <b>C</b> (<kbd>1</kbd>).`, hl: ['rcMode'], check: () => D.mode === 'C' },
+      { title: 'Switch to Cine mode', text: () => `Slow and smooth. Press <kbd>1</kbd>.`, hl: ['rcMode'], check: () => D.mode === 'C' },
       TAKEOFF,
-      { title: 'Camera view', text: () => `Switch to the camera view (<kbd>C</kbd>), the same picture you'd see in DJI Fly.`, check: () => VIEW.mode === 'fpv' },
-      { title: 'Climb to 15–35 m', text: () => `Climb slowly. In Cine this takes a while, which is the point.`, check: () => relH() > 15 && relH() < 35, prog: () => `H ${relH().toFixed(1)} m` },
-      { title: 'Frame and shoot', text: () => `Find the glass office tower to the north-west. Yaw and tilt the gimbal (<kbd>Q</kbd>/<kbd>E</kbd>) until it sits in the crosshair, then press the shutter <kbd>P</kbd>.`, hl: ['rcShutter', 'rcDial'], check: () => L.st.photo },
+      { title: 'Camera view', text: () => `Press <kbd>C</kbd> for the camera view.`, check: () => VIEW.mode === 'fpv' },
+      { title: 'Climb to 15–35 m', text: () => `Climb slowly.`, check: () => relH() > 15 && relH() < 35, prog: () => `H ${relH().toFixed(1)} m` },
+      { title: 'Frame and shoot', text: () => `Centre the office tower (north-west) with yaw and <kbd>Q</kbd>/<kbd>E</kbd>, then press <kbd>P</kbd>.`, hl: ['rcShutter', 'rcDial'], check: () => L.st.photo },
       LAND_PAD(2)
     ]
   }
@@ -2473,14 +2529,10 @@ function restartLesson() { if (L.cur) startLesson(L.cur.id); }
 function exitLesson() { L.cur = null; $('#lesson').hidden = true; setCourse([]); rcHl = []; rcGhost = []; }
 function enterStep() { const s = L.cur.steps[L.step]; L.st.stepT = 0; s.enter?.(); renderLesson(); }
 function renderLesson() {
-  const ol = $('#lSteps'); ol.innerHTML = '';
-  L.cur.steps.forEach((s, i) => {
-    const li = document.createElement('li'); li.className = i < L.step ? 'done' : i === L.step ? 'cur' : '';
-    li.innerHTML = `<div><span class="tt">${s.title}</span>${i === L.step ? `<span class="tx">${s.text()}</span>` : ''}</div>`; ol.appendChild(li);
-  });
-  const s = L.cur.steps[L.step];
+  const n = L.cur.steps.length, s = L.cur.steps[L.step];
+  $('#lDots').innerHTML = L.cur.steps.map((_, i) => `<i class="${i < L.step ? 'done' : i === L.step ? 'cur' : ''}"></i>`).join('');
+  $('#lStep').innerHTML = `<small>Step ${L.step + 1} of ${n}</small><div class="stt">${s.title}</div><p>${s.text()}</p>`;
   rcHl = typeof s.hl === 'function' ? s.hl() : s.hl || []; rcGhost = s.hint ? s.hint() : [];
-  ol.querySelector('.cur')?.scrollIntoView({ block: 'nearest' });
 }
 function updateLesson(dt) {
   if (!L.cur || D.crashed) return;
@@ -2508,7 +2560,7 @@ function completeLesson() {
   });
   exitLesson();
 }
-function startFree() { exitLesson(); resetDrone(); setView('chase', true); APP.started = true; applyLayout(); closeMenu(); toast('Free flight — press Esc for the menu', 'ok'); }
+function startFree() { exitLesson(); resetDrone(); setView('chase', true); APP.started = true; applyLayout(); closeMenu(); toast('Free flight', 'ok'); }
 function showCrash() {
   if (!D.crashed) return;
   APP.paused = true;
@@ -2540,32 +2592,45 @@ function showModal({ eyebrow, title, body, buttons }) {
 function modalClose() { $('#modal').hidden = true; }
 function toggleMenu(force) {
   const show = force ?? $('#menu').hidden;
-  if (show) { modalClose(); $('#menu').hidden = false; APP.paused = true; $('#btnResume').hidden = !APP.started || D.crashed; refreshMenu(); }
+  if (show) { modalClose(); $('#menu').hidden = false; $('#app').classList.add('menu-open'); APP.paused = true; refreshMenu(); }
   else closeMenu();
 }
-function closeMenu() { $('#menu').hidden = true; modalClose(); APP.paused = false; }
+function closeMenu() { $('#menu').hidden = true; $('#app').classList.remove('menu-open'); modalClose(); APP.paused = false; }
+const GROUPS = [['Basics', 0, 4], ['Orientation', 4, 8], ['Advanced', 8, LESSONS.length]];
+const nextLesson = () => LESSONS.find(l => !S.done[l.id]);
 function refreshMenu() {
-  const ol = $('#lessonList'); ol.innerHTML = '';
-  LESSONS.forEach((l, i) => {
-    const li = document.createElement('li'); if (S.done[l.id]) li.className = 'done';
-    li.innerHTML = `<button id="les-${l.id}"><span class="n">${String(i + 1).padStart(2, '0')}</span><span><span class="t">${l.title}</span><span class="s">${l.sum}</span></span><span class="ok">${S.done[l.id] ? '✓ ' + fmtT(S.best[l.id]) : ''}</span></button>`;
-    li.querySelector('button').onclick = () => startLesson(l.id); ol.appendChild(li);
-  });
+  const box = $('#lessonList'), nx = nextLesson(); box.innerHTML = '';
+  for (const [name, a, b] of GROUPS) {
+    const h = document.createElement('h4'); h.textContent = name; box.appendChild(h);
+    const ol = document.createElement('ol'); box.appendChild(ol);
+    LESSONS.slice(a, b).forEach((l, k) => {
+      const i = a + k, li = document.createElement('li'); li.className = S.done[l.id] ? 'done' : l === nx ? 'next' : '';
+      li.innerHTML = `<button id="les-${l.id}" title="${l.sum.replace(/"/g, '&quot;')}"><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${l.title}</span><span class="ok">${S.done[l.id] ? '✓ ' + fmtT(S.best[l.id]) : l === nx ? 'Next' : ''}</span></button>`;
+      li.querySelector('button').onclick = () => { initAudio(); startLesson(l.id); }; ol.appendChild(li);
+    });
+  }
+  const done = LESSONS.filter(l => S.done[l.id]).length, resume = APP.started && !D.crashed;
+  $('#courseCount').textContent = `${done} / ${LESSONS.length}`; $('#courseBar').style.width = (done / LESSONS.length * 100) + '%';
+  const st = $('#btnStart');
+  st.hidden = !nx; if (nx) st.textContent = `${done ? 'Continue' : 'Start'} lesson ${LESSONS.indexOf(nx) + 1}`;
+  st.classList.toggle('primary', !resume); $('#btnResume').hidden = !resume;
+  $('#btnFree').classList.toggle('primary', !resume && !nx);
   $$('#modeSeg button').forEach(b => b.classList.toggle('on', +b.dataset.m === S.stickMode));
   drawModeDiagram(); inputStatus();
 }
 function drawModeDiagram() {
-  const lab = rcLabels();
-  const card = (side, l) => `<div class="mstick"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#14181c" stroke="#4a5058"/><path d="M32 12v40M12 32h40" stroke="#f5a524" stroke-width="2" opacity=".55"/><path d="M27 16l5-6 5 6M27 48l5 6 5-6M16 27l-6 5 6 5M48 27l6 5-6 5" fill="none" stroke="#f5a524" stroke-width="2" stroke-linejoin="round"/><circle cx="32" cy="32" r="9" fill="#5b6168" stroke="#8a9199"/></svg><p><b>${side} stick</b>Up / down: ${l.y[2].toLowerCase()} (${l.y[0].toLowerCase()} / ${l.y[1].toLowerCase()})<br>Left / right: ${l.x[2].toLowerCase()} (${l.x[0].toLowerCase()} / ${l.x[1].toLowerCase()})</p></div>`;
-  $('#modeDiagram').innerHTML = card('Left', lab.L) + card('Right', lab.R);
+  const lab = rcLabels(), cap = w => w[0] + w.slice(1).toLowerCase();
+  const side = (k, l) => `<span><i>${k}</i>${cap(l.y[2])} · ${cap(l.x[2])}</span>`;
+  $('#modeDiagram').innerHTML = side('L', lab.L) + side('R', lab.R);
 }
-function inputStatus() { $('#inputStatus').innerHTML = `Keyboard ready. ${GP.connected ? `Gamepad connected: <b>${GP.id.replace(/</g, '')}</b>.` : 'No gamepad found. Plug one in and press any button on it.'} Touch sticks: ${touchSticksOn() ? 'on' : 'off'}.`; }
+function inputStatus() { $('#inputStatus').innerHTML = `<span><i class="on"></i>Keyboard</span><span title="${GP.connected ? GP.id.replace(/"/g, '') : 'Press any button on a gamepad to connect it'}"><i class="${GP.connected ? 'on' : ''}"></i>Gamepad</span>${touchSticksOn() ? '<span><i class="on"></i>Touch</span>' : ''}`; }
 function setStickMode(m) { S.stickMode = m; saveS(); buildRC(); refreshMenu(); if (L.cur) renderLesson(); }
 $$('#modeSeg button').forEach(b => b.addEventListener('click', () => setStickMode(+b.dataset.m)));
 $('#btnFree').addEventListener('click', () => { initAudio(); startFree(); });
+$('#btnStart').addEventListener('click', () => { initAudio(); const nx = nextLesson(); if (nx) startLesson(nx.id); });
 $('#btnResume').addEventListener('click', () => { initAudio(); closeMenu(); });
 $('#lRestart').addEventListener('click', restartLesson);
-$('#lExit').addEventListener('click', () => { exitLesson(); toast('Lesson closed. You are in free flight'); });
+$('#lExit').addEventListener('click', () => { exitLesson(); toast('Free flight'); });
 $('#pClose').addEventListener('click', closePanel);
 $('#panel').addEventListener('click', e => { if (e.target.id === 'panel') closePanel(); });
 $$('[data-panel]').forEach(b => b.addEventListener('click', () => openPanel(b.dataset.panel)));
@@ -2659,7 +2724,12 @@ const PANELS = {
   <li>Check your country's civil aviation rules. Many require registration or a basic test before you fly a drone this heavy.</li>
   <li>Obstacle sensing can't see thin wires, glass or branches reliably, and it's off in Sport mode.</li></ul>`,
   photos: () => APP.photos.length ? `<p>${APP.photos.length} photo${APP.photos.length > 1 ? 's' : ''} from this session. Click one to enlarge.</p><div class="gallery">${APP.photos.map((p, i) => `<img src="${p}" alt="Photo ${APP.photos.length - i}" data-i="${i}">`).join('')}</div><div class="big" id="bigPhoto" style="margin-top:14px"></div>`
-    : `<p>No photos yet. In flight, switch to photo mode (<kbd>V</kbd>) and press the shutter (<kbd>P</kbd>) or the white button on the right.</p>`
+    : `<p>No photos yet. In flight, press <kbd>P</kbd> or the white shutter button.</p>`,
+  about: () => `
+  <h3>Why this exists</h3>
+  <p>Built as our Final Year Project. We needed to learn the basic controls of a drone, so we made a safe place to practise the Mavic 3 and its RC-N1 remote before flying the real aircraft.</p>
+  <h3>Disclaimer</h3>
+  <p>Unofficial training tool. Not affiliated with or endorsed by DJI. For real flights, follow the official manual and your local aviation rules.</p>`
 };
 const PANELS_BIND = {
   settings() {
@@ -2674,7 +2744,7 @@ const PANELS_BIND = {
   },
   photos() { $$('.gallery img').forEach(img => img.onclick = () => { $('#bigPhoto').innerHTML = `<img src="${img.src}" alt="Enlarged photo">`; $('#bigPhoto').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }); }
 };
-function openPanel(k) { $('#pTitle').textContent = { controls: 'Controls', settings: 'Settings', guide: 'Field guide', photos: 'Photos' }[k]; $('#pBody').innerHTML = PANELS[k](); PANELS_BIND[k]?.(); $('#panel').hidden = false; APP.panel = k; $('#pBody').scrollTop = 0; }
+function openPanel(k) { $('#pTitle').textContent = { controls: 'Controls', settings: 'Settings', guide: 'Field guide', photos: 'Photos', about: 'About' }[k]; $('#pBody').innerHTML = PANELS[k](); PANELS_BIND[k]?.(); $('#panel').hidden = false; APP.panel = k; $('#pBody').scrollTop = 0; }
 function closePanel() { $('#panel').hidden = true; APP.panel = null; }
 function updateAxesLive() {
   const box = $('#axesLive'); if (!box) return;
@@ -2705,7 +2775,7 @@ function capturePhoto(W, H) {
   const c = document.createElement('canvas'); c.width = 800; c.height = Math.round(800 * H / W);
   try { c.getContext('2d').drawImage(glCanvas, 0, 0, c.width, c.height); APP.photos.unshift(c.toDataURL('image/jpeg', 0.86)); if (APP.photos.length > 30) APP.photos.pop(); } catch (e) { }
   const f = $('#flash'); f.style.transition = 'none'; f.style.opacity = 0.75; void f.offsetWidth; f.style.transition = 'opacity .35s'; f.style.opacity = 0;
-  sfx.shutter(); toast('Photo saved. See menu → Photos');
+  sfx.shutter(); toast('Photo saved');
   L.cur?.onPhoto?.();
 }
 
@@ -2740,7 +2810,7 @@ function draw(dt, t) {
   updateDroneVisual(dt, t); updatePilot(dt, t);
   const W = innerWidth, H = innerHeight;
   updateCameras(dt, W / H);
-  const rcWrapEl = $('#rcWrap'), rcOn = APP.started && !rcWrapEl.hidden;
+  const rcWrapEl = $('#rcWrap'), rcOn = APP.started && !rcWrapEl.hidden && $('#menu').hidden;
   // with the remote docked at the bottom, shift the view so the drone sits in the open sky above it, not behind the phone
   if (rcOn && VIEW.mode !== 'fpv' && !VIEW.dbg) cam.setViewOffset(W, H, 0, Math.min(rcWrapEl.offsetHeight * 0.42, H * 0.2), W, H); else cam.clearViewOffset();
   cam.updateProjectionMatrix();
